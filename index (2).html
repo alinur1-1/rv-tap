@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Оцените наш сервис</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --subtext: #64748b;
+      --accent-yes: #10b981;
+      --accent-no: #ef4444;
+      --border: #e2e8f0;
+      --radius: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 16px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      width: 100%;
+      max-width: 400px;
+      padding: 28px 20px;
+      border-radius: var(--radius);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+      text-align: center;
+    }
+
+    .logo {
+      width: 64px;
+      height: 64px;
+      margin-bottom: 16px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    h1 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    p.subtitle {
+      font-size: 14px;
+      color: var(--subtext);
+      margin-bottom: 24px;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 14px;
+      font-size: 16px;
+      font-weight: 600;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: transform 0.1s ease;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-yes {
+      background-color: var(--accent-yes);
+      color: #fff;
+    }
+
+    .btn-no {
+      background-color: #fee2e2;
+      color: var(--accent-no);
+    }
+
+    /* Форма негативного отзыва */
+    #feedback-section {
+      display: none;
+      margin-top: 24px;
+      text-align: left;
+      border-top: 1px solid var(--border);
+      padding-top: 20px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--subtext);
+      margin-bottom: 6px;
+    }
+
+    textarea, input {
+      width: 100%;
+      padding: 12px;
+      font-size: 14px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin-bottom: 14px;
+      outline: none;
+    }
+
+    textarea:focus, input:focus {
+      border-color: var(--text);
+    }
+
+    .btn-submit {
+      width: 100%;
+      background: var(--text);
+      color: #fff;
+      padding: 14px;
+      border-radius: 10px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+    }
+
+    #success-message {
+      display: none;
+      margin-top: 20px;
+      color: var(--accent-yes);
+      font-weight: 600;
+      font-size: 15px;
+    }
+
+    .soft-link {
+      display: block;
+      margin-top: 16px;
+      font-size: 12px;
+      color: var(--subtext);
+      text-decoration: underline;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <div id="main-content">
+      <img src="https://via.placeholder.com/80" alt="Логотип" class="logo">
+      <h1>Вам всё понравилось?</h1>
+      <p class="subtitle">Ваш отзыв помогает нам становиться лучше каждый день</p>
+
+      <div class="btn-group">
+        <button class="btn btn-yes" onclick="handleYes()">👍 Да</button>
+        <button class="btn btn-no" onclick="handleNo()">👎 Нет</button>
+      </div>
+    </div>
+
+    <!-- Блок негативного отзыва -->
+    <div id="feedback-section">
+      <h2 style="font-size: 16px; margin-bottom: 12px;">Расскажите, что пошло не так?</h2>
+      
+      <label for="comment">Что именно вам не понравилось?</label>
+      <textarea id="comment" rows="3" placeholder="Опишите ситуацию..."></textarea>
+
+      <label for="contact">Ваш номер телефона / Instagram (для связи):</label>
+      <input type="text" id="contact" placeholder="+7 (7xx) xxx-xx-xx">
+
+      <button class="btn-submit" onclick="sendComplaint()">Отправить руководству</button>
+      
+      <a id="direct-map-link" class="soft-link" href="#">Все равно перейти в 2GIS</a>
+    </div>
+
+    <div id="success-message">
+      Спасибо! Сообщение отправлено управляющему. Мы свяжемся с вами в течение 15 минут, чтобы исправить ситуацию.
+    </div>
+  </div>
+
+  <script>
+    // ================= НАСТРОЙКИ КЛИЕНТА =================
+    // Ссылка на филиал в 2GIS
+    const TWOGIS_URL = "https://2gis.kz/almaty/geo/70000001078537616?inv_by=ac28da18000a47658477956c82e8772f&inv_ts=1791994527"; 
+    
+    // Данные твоего Telegram-бота
+    const TG_BOT_TOKEN = "8817952265:AAGl68TGXzsageSQ92SdjmreTE5oV8Yv3mY"; 
+    const TG_CHAT_ID = "@ippon_i"; 
+    // =====================================================
+
+    document.getElementById('direct-map-link').href = TWOGIS_URL;
+
+    function handleYes() {
+      // Редирект в 2GIS
+      window.location.href = TWOGIS_URL;
+    }
+
+    function handleNo() {
+      document.querySelector('.btn-group').style.display = 'none';
+      document.getElementById('feedback-section').style.display = 'block';
+    }
+
+    async function sendComplaint() {
+      const comment = document.getElementById('comment').value.trim();
+      const contact = document.getElementById('contact').value.trim();
+
+      if (!comment) {
+        alert("Пожалуйста, напишите, что вам не понравилось.");
+        return;
+      }
+
+      const text = `🚨 *Негативный отзыв через NFC!*\n\n` +
+                   `📝 *Проблема:* ${comment}\n` +
+                   `📞 *Контакты:* ${contact || "Не указан"}\n` +
+                   `⏰ *Время:* ${new Date().toLocaleTimeString('ru-RU')}`;
+
+      try {
+        await fetch(`https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: TG_CHAT_ID,
+            text: text,
+            parse_mode: 'Markdown'
+          })
+        });
+
+        document.getElementById('feedback-section').style.display = 'none';
+        document.getElementById('main-content').style.display = 'none';
+        document.getElementById('success-message').style.display = 'block';
+
+      } catch (error) {
+        alert("Ошибка сети. Пожалуйста, обратитесь к менеджеру заведения.");
+      }
+    }
+  </script>
+</body>
+</html>
