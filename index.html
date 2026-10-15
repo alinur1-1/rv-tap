@@ -124,7 +124,6 @@
       outline: none;
     }
 
-    /* Блок согласия на обработку данных */
     .consent-box {
       display: flex;
       align-items: flex-start;
@@ -208,7 +207,6 @@
       <label for="contact">Ваш номер телефона / Instagram:</label>
       <input type="text" id="contact" placeholder="+7 (7xx) xxx-xx-xx">
 
-      <!-- Галочка согласия (блокирует кнопку до нажатия) -->
       <div class="consent-box">
         <input type="checkbox" id="consent-check" onchange="toggleSubmitButton()">
         <label for="consent-check">
@@ -227,7 +225,6 @@
   </div>
 
   <script>
-    // ================= БАЗА ЗАВЕДЕНИЙ =================
     const PLACES = {
       "default": {
         name: "Reviews Tap Demo",
@@ -243,12 +240,10 @@
       }
     };
 
-    // Читаем филиал из URL (например: ?place=cafe1)
     const urlParams = new URLSearchParams(window.location.search);
     const currentPlaceId = urlParams.get('place') || 'default';
     const placeData = PLACES[currentPlaceId] || PLACES['default'];
 
-    // ВАШ ТУННЕЛЬ ИЗ VS CODE
     const API_ENDPOINT = "https://8w8slp2v-8080.eun1.devtunnels.ms/api/feedback";
 
     document.getElementById('place-title').innerText = `Вам всё понравилось в ${placeData.name}?`;
@@ -273,6 +268,7 @@
       const comment = document.getElementById('comment').value.trim();
       const contact = document.getElementById('contact').value.trim();
       const consent = document.getElementById('consent-check').checked;
+      const submitBtn = document.getElementById('submit-btn');
 
       if (!consent) {
         alert("Для отправки необходимо подтвердить согласие на обработку данных.");
@@ -284,12 +280,15 @@
         return;
       }
 
+      submitBtn.disabled = true;
+      submitBtn.innerText = "Отправка...";
+
       try {
         const response = await fetch(API_ENDPOINT, {
           method: "POST",
           headers: { 
             "Content-Type": "application/json",
-            "X-Tunnel-Skip-Anti-Phishing-Page": "true"
+            "X-Tunnel-Skip-Anti-Phishing-Page": "1"
           },
           body: JSON.stringify({
             place_id: currentPlaceId,
@@ -300,7 +299,7 @@
         });
 
         if (!response.ok) {
-          throw new Error("Ошибка сервера: " + response.status);
+          throw new Error("Сервер вернул статус " + response.status);
         }
 
         document.getElementById('feedback-section').style.display = 'none';
@@ -308,8 +307,9 @@
         document.getElementById('success-message').style.display = 'block';
 
       } catch (error) {
-        console.error(error);
-        alert("Ошибка отправки. Убедитесь, что бот запущен на компьютере.");
+        submitBtn.disabled = false;
+        submitBtn.innerText = "Отправить руководству";
+        alert("Ошибка сети (" + error.message + "). Убедитесь, что бот запущен, а порт в VS Code сделан Public.");
       }
     }
   </script>
