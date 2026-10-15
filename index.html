@@ -208,7 +208,7 @@
       <label for="contact">Ваш номер телефона / Instagram:</label>
       <input type="text" id="contact" placeholder="+7 (7xx) xxx-xx-xx">
 
-      <!-- Галочка согласия -->
+      <!-- Галочка согласия (блокирует кнопку до нажатия) -->
       <div class="consent-box">
         <input type="checkbox" id="consent-check" onchange="toggleSubmitButton()">
         <label for="consent-check">
@@ -228,7 +228,6 @@
 
   <script>
     // ================= БАЗА ЗАВЕДЕНИЙ =================
-    // В будущем сюда добавляются новые заведения и их ссылки на 2GIS
     const PLACES = {
       "default": {
         name: "Reviews Tap Demo",
@@ -244,12 +243,12 @@
       }
     };
 
-    // Определяем текущее заведение из URL (например, ?place=cafe1)
+    // Читаем филиал из URL (например: ?place=cafe1)
     const urlParams = new URLSearchParams(window.location.search);
     const currentPlaceId = urlParams.get('place') || 'default';
     const placeData = PLACES[currentPlaceId] || PLACES['default'];
 
-    // Адрес API бота (на проде здесь будет адрес вашего сервера/VPS)
+    // ВАШ ТУННЕЛЬ ИЗ VS CODE
     const API_ENDPOINT = "https://8w8slp2v-8080.eun1.devtunnels.ms/api/feedback";
 
     document.getElementById('place-title').innerText = `Вам всё понравилось в ${placeData.name}?`;
@@ -264,7 +263,6 @@
       document.getElementById('feedback-section').style.display = 'block';
     }
 
-    // Включение/отключение кнопки в зависимости от чекбокса
     function toggleSubmitButton() {
       const checkbox = document.getElementById('consent-check');
       const submitBtn = document.getElementById('submit-btn');
@@ -289,7 +287,10 @@
       try {
         const response = await fetch(API_ENDPOINT, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { 
+            "Content-Type": "application/json",
+            "X-Tunnel-Skip-Anti-Phishing-Page": "true"
+          },
           body: JSON.stringify({
             place_id: currentPlaceId,
             place_name: placeData.name,
@@ -299,7 +300,7 @@
         });
 
         if (!response.ok) {
-          throw new Error("Ошибка сервера");
+          throw new Error("Ошибка сервера: " + response.status);
         }
 
         document.getElementById('feedback-section').style.display = 'none';
@@ -307,7 +308,8 @@
         document.getElementById('success-message').style.display = 'block';
 
       } catch (error) {
-        alert("Ошибка отправки. Пожалуйста, сообщите администратору зала.");
+        console.error(error);
+        alert("Ошибка отправки. Убедитесь, что бот запущен на компьютере.");
       }
     }
   </script>
