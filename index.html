@@ -98,7 +98,6 @@
       color: var(--accent-no);
     }
 
-    /* Форма негативного отзыва */
     #feedback-section {
       display: none;
       margin-top: 24px;
@@ -115,7 +114,7 @@
       margin-bottom: 6px;
     }
 
-    textarea, input {
+    textarea, input[type="text"] {
       width: 100%;
       padding: 12px;
       font-size: 14px;
@@ -125,8 +124,29 @@
       outline: none;
     }
 
-    textarea:focus, input:focus {
-      border-color: var(--text);
+    /* Блок согласия на обработку данных */
+    .consent-box {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 16px;
+      text-align: left;
+    }
+
+    .consent-box input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      accent-color: var(--text);
+      cursor: pointer;
+    }
+
+    .consent-box label {
+      font-size: 12px;
+      line-height: 1.4;
+      color: var(--subtext);
+      font-weight: 400;
+      cursor: pointer;
     }
 
     .btn-submit {
@@ -138,6 +158,13 @@
       font-weight: 600;
       border: none;
       cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .btn-submit:disabled {
+      background: #94a3b8;
+      cursor: not-allowed;
+      opacity: 0.7;
     }
 
     #success-message {
@@ -163,7 +190,7 @@
   <div class="card">
     <div id="main-content">
       <img src="https://via.placeholder.com/80" alt="Логотип" class="logo">
-      <h1>Вам всё понравилось?</h1>
+      <h1 id="place-title">Вам всё понравилось?</h1>
       <p class="subtitle">Ваш отзыв помогает нам становиться лучше каждый день</p>
 
       <div class="btn-group">
@@ -172,17 +199,24 @@
       </div>
     </div>
 
-    <!-- Блок негативного отзыва -->
     <div id="feedback-section">
       <h2 style="font-size: 16px; margin-bottom: 12px;">Расскажите, что пошло не так?</h2>
       
       <label for="comment">Что именно вам не понравилось?</label>
       <textarea id="comment" rows="3" placeholder="Опишите ситуацию..."></textarea>
 
-      <label for="contact">Ваш номер телефона / Instagram (для связи):</label>
+      <label for="contact">Ваш номер телефона / Instagram:</label>
       <input type="text" id="contact" placeholder="+7 (7xx) xxx-xx-xx">
 
-      <button class="btn-submit" onclick="sendComplaint()">Отправить руководству</button>
+      <!-- Галочка согласия -->
+      <div class="consent-box">
+        <input type="checkbox" id="consent-check" onchange="toggleSubmitButton()">
+        <label for="consent-check">
+          Я согласен(на) на обработку персональных данных (номера телефона) для связи со мной администрацией заведения.
+        </label>
+      </div>
+
+      <button id="submit-btn" class="btn-submit" onclick="sendComplaint()" disabled>Отправить руководству</button>
       
       <a id="direct-map-link" class="soft-link" href="#">Все равно перейти в 2GIS</a>
     </div>
@@ -193,20 +227,36 @@
   </div>
 
   <script>
-    // ================= НАСТРОЙКИ КЛИЕНТА =================
-    // Ссылка на филиал в 2GIS
-    const TWOGIS_URL = "https://2gis.kz/almaty/geo/70000001078537616?inv_by=ac28da18000a47658477956c82e8772f&inv_ts=1791994527"; 
-    
-    // Данные твоего Telegram-бота
-    const TG_BOT_TOKEN = "8817952265:AAGl68TGXzsageSQ92SdjmreTE5oV8Yv3mY"; 
-    const TG_CHAT_ID = "5904604582"; 
-    // =====================================================
+    // ================= БАЗА ЗАВЕДЕНИЙ =================
+    // В будущем сюда добавляются новые заведения и их ссылки на 2GIS
+    const PLACES = {
+      "default": {
+        name: "Reviews Tap Demo",
+        twogis_url: "https://2gis.kz/almaty/geo/70000001078537616"
+      },
+      "cafe1": {
+        name: "Кофейня Almaty Central",
+        twogis_url: "https://2gis.kz/almaty/geo/70000001078537616"
+      },
+      "restaurant2": {
+        name: "Ресторан Dostyk",
+        twogis_url: "https://2gis.kz/almaty"
+      }
+    };
 
-    document.getElementById('direct-map-link').href = TWOGIS_URL;
+    // Определяем текущее заведение из URL (например, ?place=cafe1)
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentPlaceId = urlParams.get('place') || 'default';
+    const placeData = PLACES[currentPlaceId] || PLACES['default'];
+
+    // Адрес API бота (на проде здесь будет адрес вашего сервера/VPS)
+    const API_ENDPOINT = "http://localhost:8080/api/feedback";
+
+    document.getElementById('place-title').innerText = `Вам всё понравилось в ${placeData.name}?`;
+    document.getElementById('direct-map-link').href = placeData.twogis_url;
 
     function handleYes() {
-      // Редирект в 2GIS
-      window.location.href = TWOGIS_URL;
+      window.location.href = placeData.twogis_url;
     }
 
     function handleNo() {
@@ -214,37 +264,50 @@
       document.getElementById('feedback-section').style.display = 'block';
     }
 
+    // Включение/отключение кнопки в зависимости от чекбокса
+    function toggleSubmitButton() {
+      const checkbox = document.getElementById('consent-check');
+      const submitBtn = document.getElementById('submit-btn');
+      submitBtn.disabled = !checkbox.checked;
+    }
+
     async function sendComplaint() {
       const comment = document.getElementById('comment').value.trim();
       const contact = document.getElementById('contact').value.trim();
+      const consent = document.getElementById('consent-check').checked;
 
-      if (!comment) {
-        alert("Пожалуйста, напишите, что вам не понравилось.");
+      if (!consent) {
+        alert("Для отправки необходимо подтвердить согласие на обработку данных.");
         return;
       }
 
-      const text = `🚨 *Негативный отзыв через NFC!*\n\n` +
-                   `📝 *Проблема:* ${comment}\n` +
-                   `📞 *Контакты:* ${contact || "Не указан"}\n` +
-                   `⏰ *Время:* ${new Date().toLocaleTimeString('ru-RU')}`;
+      if (!comment) {
+        alert("Пожалуйста, опишите причину обращения.");
+        return;
+      }
 
       try {
-        await fetch(`https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+        const response = await fetch(API_ENDPOINT, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            chat_id: TG_CHAT_ID,
-            text: text,
-            parse_mode: 'Markdown'
+            place_id: currentPlaceId,
+            place_name: placeData.name,
+            comment: comment,
+            contact: contact
           })
         });
+
+        if (!response.ok) {
+          throw new Error("Ошибка сервера");
+        }
 
         document.getElementById('feedback-section').style.display = 'none';
         document.getElementById('main-content').style.display = 'none';
         document.getElementById('success-message').style.display = 'block';
 
       } catch (error) {
-        alert("Ошибка сети. Пожалуйста, обратитесь к менеджеру заведения.");
+        alert("Ошибка отправки. Пожалуйста, сообщите администратору зала.");
       }
     }
   </script>
