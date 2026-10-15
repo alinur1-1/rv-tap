@@ -250,7 +250,7 @@
     const placeData = PLACES[currentPlaceId] || PLACES['default'];
 
     // Адрес API бота (на проде здесь будет адрес вашего сервера/VPS)
-    const API_ENDPOINT = "http://localhost:8080/api/feedback";
+    const API_ENDPOINT = "https://8w8slp2v-8080.eun1.devtunnels.ms/api/feedback";
 
     document.getElementById('place-title').innerText = `Вам всё понравилось в ${placeData.name}?`;
     document.getElementById('direct-map-link').href = placeData.twogis_url;
