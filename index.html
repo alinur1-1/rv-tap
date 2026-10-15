@@ -124,6 +124,7 @@
       outline: none;
     }
 
+    /* Чекбокс согласия */
     .consent-box {
       display: flex;
       align-items: flex-start;
@@ -198,6 +199,7 @@
       </div>
     </div>
 
+    <!-- Блок негативного отзыва -->
     <div id="feedback-section">
       <h2 style="font-size: 16px; margin-bottom: 12px;">Расскажите, что пошло не так?</h2>
       
@@ -225,6 +227,8 @@
   </div>
 
   <script>
+    // ================= СПИСОК ВСЕХ КОМПАНИЙ / ТОЧЕК =================
+    // Добавляйте сюда новых клиентов:
     const PLACES = {
       "default": {
         name: "Reviews Tap Demo",
@@ -234,16 +238,18 @@
         name: "Кофейня Almaty Central",
         twogis_url: "https://2gis.kz/almaty/geo/70000001078537616"
       },
-      "restaurant2": {
-        name: "Ресторан Dostyk",
+      "dostyk_burger": {
+        name: "Burger Bar (Достык)",
         twogis_url: "https://2gis.kz/almaty"
       }
     };
 
+    // Читаем филиал из ссылки (например: https://alinur1-1.github.io/?place=cafe1)
     const urlParams = new URLSearchParams(window.location.search);
     const currentPlaceId = urlParams.get('place') || 'default';
     const placeData = PLACES[currentPlaceId] || PLACES['default'];
 
+    // Адрес туннеля к боту
     const API_ENDPOINT = "https://8w8slp2v-8080.eun1.devtunnels.ms/api/feedback";
 
     document.getElementById('place-title').innerText = `Вам всё понравилось в ${placeData.name}?`;
@@ -276,7 +282,7 @@
       }
 
       if (!comment) {
-        alert("Пожалуйста, опишите причину обращения.");
+        alert("Пожалуйста, опишите проблему.");
         return;
       }
 
@@ -299,7 +305,7 @@
         });
 
         if (!response.ok) {
-          throw new Error("Сервер вернул статус " + response.status);
+          throw new Error("Код ответа: " + response.status);
         }
 
         document.getElementById('feedback-section').style.display = 'none';
@@ -309,7 +315,7 @@
       } catch (error) {
         submitBtn.disabled = false;
         submitBtn.innerText = "Отправить руководству";
-        alert("Ошибка сети (" + error.message + "). Убедитесь, что бот запущен, а порт в VS Code сделан Public.");
+        alert("Ошибка отправки: " + error.message + ". Убедитесь, что бот запущен на компьютере.");
       }
     }
   </script>
