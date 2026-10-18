@@ -124,7 +124,6 @@
       outline: none;
     }
 
-    /* Чекбокс согласия */
     .consent-box {
       display: flex;
       align-items: flex-start;
@@ -199,7 +198,7 @@
       </div>
     </div>
 
-    <!-- Блок негативного отзыва -->
+    <!-- Форма отрицательного отзыва -->
     <div id="feedback-section">
       <h2 style="font-size: 16px; margin-bottom: 12px;">Расскажите, что пошло не так?</h2>
       
@@ -222,38 +221,30 @@
     </div>
 
     <div id="success-message">
-      Спасибо! Сообщение отправлено управляющему. Мы свяжемся с вами в течение 15 минут, чтобы исправить ситуацию.
+      Спасибо! Сообщение отправлено руководству. Мы свяжемся с вами в течение 15 минут, чтобы исправить ситуацию.
     </div>
   </div>
 
   <script>
-    // ================= СПИСОК ВСЕХ КОМПАНИЙ / ТОЧЕК =================
-    // Добавляйте сюда новых клиентов:
+    // ================= СПИСОК ЗАВЕДЕНИЙ И ССЫЛОК =================
+    const NEW_TWOGIS_URL = "https://2gis.kz/almaty/geo/70000001116117394?inv_by=ac28da18000a47658477956c82e8772f&inv_ts=1792294358";
+
     const PLACES = {
       "default": {
         name: "Reviews Tap Demo",
-        twogis_url: "https://2gis.kz/almaty/geo/70000001078537616?inv_by=ac28da18000a47658477956c82e8772f&inv_ts=1791994527"
+        twogis_url: NEW_TWOGIS_URL
       },
       "cafe1": {
-        name: "Кофейня Almaty Central",
-        twogis_url: "https://2gis.kz/almaty/geo/70000001078537616"
-      },
-      "dostyk_burger": {
-        name: "Burger Bar (Достык)",
-        twogis_url: "https://2gis.kz/almaty"
+        name: "Филиал на Аль-Фараби",
+        twogis_url: NEW_TWOGIS_URL
       }
-      "kfc_arbat": {
-  name: "KFC Арбат",
-  twogis_url: "https://2gis.kz/almaty/firm/..."
-}
     };
 
-    // Читаем филиал из ссылки (например: https://alinur1-1.github.io/?place=cafe1)
     const urlParams = new URLSearchParams(window.location.search);
     const currentPlaceId = urlParams.get('place') || 'default';
     const placeData = PLACES[currentPlaceId] || PLACES['default'];
 
-    // Адрес туннеля к боту
+    // Вставьте актуальный URL туннеля или вашего внешнего сервера
     const API_ENDPOINT = "https://8w8slp2v-8080.eun1.devtunnels.ms/api/feedback";
 
     document.getElementById('place-title').innerText = `Вам всё понравилось в ${placeData.name}?`;
@@ -319,7 +310,7 @@
       } catch (error) {
         submitBtn.disabled = false;
         submitBtn.innerText = "Отправить руководству";
-        alert("Ошибка отправки: " + error.message + ". Убедитесь, что бот запущен на компьютере.");
+        alert("Ошибка отправки: " + error.message + ". Проверьте, запущен ли бот и активен ли туннель.");
       }
     }
   </script>
