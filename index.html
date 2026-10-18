@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -190,18 +191,16 @@
 
   <div class="card">
     <div id="main-content">
-      <!-- Логотип Reviews Tap -->
       <img src="logo.jpg" alt="Reviews Tap" class="logo-img" onerror="this.src='https://via.placeholder.com/80?text=RT'">
       <h1 id="place-title">Вам всё понравилось?</h1>
       <p class="subtitle">Ваш отзыв помогает нам становиться лучше каждый день</p>
 
-      <div class="btn-group">
-        <button class="btn btn-yes" onclick="handleYes()">👍 Да</button>
-        <button class="btn btn-no" onclick="handleNo()">👎 Нет</button>
+      <div class="btn-group" id="buttons-container">
+        <button type="button" class="btn btn-yes" id="btn-yes">👍 Да</button>
+        <button type="button" class="btn btn-no" id="btn-no">👎 Нет</button>
       </div>
     </div>
 
-    <!-- Форма негативного отзыва -->
     <div id="feedback-section">
       <h2 style="font-size: 16px; margin-bottom: 12px;">Расскажите, что пошло не так?</h2>
       
@@ -212,13 +211,13 @@
       <input type="text" id="contact" placeholder="+7 (7xx) xxx-xx-xx">
 
       <div class="consent-box">
-        <input type="checkbox" id="consent-check" onchange="toggleSubmitButton()">
+        <input type="checkbox" id="consent-check">
         <label for="consent-check">
           Я согласен(на) на обработку персональных данных (номера телефона) для связи со мной администрацией заведения.
         </label>
       </div>
 
-      <button id="submit-btn" class="btn-submit" onclick="sendComplaint()" disabled>Отправить руководству</button>
+      <button type="button" id="submit-btn" class="btn-submit" disabled>Отправить руководству</button>
       
       <a id="direct-map-link" class="soft-link" href="#">Все равно перейти в 2GIS</a>
     </div>
@@ -245,7 +244,6 @@
       }
     };
 
-    // Читаем филиал из URL (?place=cafe1)
     const urlParams = new URLSearchParams(window.location.search);
     const currentPlaceId = urlParams.get('place') || 'default';
     const placeData = PLACES[currentPlaceId] || PLACES['default'];
@@ -253,25 +251,25 @@
     // ВАШ ТУННЕЛЬ DEV TUNNELS
     const API_ENDPOINT = "https://8w8slp2v-8080.eun1.devtunnels.ms/api/feedback";
 
-    document.getElementById('place-title').innerText = `Вам всё понравилось в ${placeData.name}?`;
+    // Заполняем заголовок и ссылку 2GIS
+    document.getElementById('place-title').innerText = "Вам всё понравилось в " + placeData.name + "?";
     document.getElementById('direct-map-link').href = placeData.twogis_url;
 
-    function handleYes() {
+    // Привязываем кнопки через addEventListener (надёжнее чем onclick)
+    document.getElementById('btn-yes').addEventListener('click', function() {
       window.location.href = placeData.twogis_url;
-    }
+    });
 
-    function handleNo() {
-      document.querySelector('.btn-group').style.display = 'none';
+    document.getElementById('btn-no').addEventListener('click', function() {
+      document.getElementById('buttons-container').style.display = 'none';
       document.getElementById('feedback-section').style.display = 'block';
-    }
+    });
 
-    function toggleSubmitButton() {
-      const checkbox = document.getElementById('consent-check');
-      const submitBtn = document.getElementById('submit-btn');
-      submitBtn.disabled = !checkbox.checked;
-    }
+    document.getElementById('consent-check').addEventListener('change', function() {
+      document.getElementById('submit-btn').disabled = !this.checked;
+    });
 
-   async function sendComplaint() {
+    document.getElementById('submit-btn').addEventListener('click', async function() {
       const comment = document.getElementById('comment').value.trim();
       const contact = document.getElementById('contact').value.trim();
       const consent = document.getElementById('consent-check').checked;
@@ -298,7 +296,6 @@
       });
 
       try {
-        // Отправляем как text/plain, чтобы обойти блокировку preflight OPTIONS в туннеле
         const response = await fetch(API_ENDPOINT, {
           method: "POST",
           headers: {
@@ -306,6 +303,10 @@
           },
           body: payload
         });
+
+        if (!response.ok) {
+          throw new Error("Код ответа сервера: " + response.status);
+        }
 
         document.getElementById('feedback-section').style.display = 'none';
         document.getElementById('main-content').style.display = 'none';
@@ -317,40 +318,7 @@
         submitBtn.innerText = "Отправить руководству";
         alert("Ошибка сети (" + error.message + "). Проверьте запуск бота в терминале.");
       }
-    }
-      submitBtn.disabled = true;
-      submitBtn.innerText = "Отправка...";
-
-      try {
-        const response = await fetch(API_ENDPOINT, {
-          method: "POST",
-          mode: "cors",
-          headers: { 
-            "Content-Type": "application/json",
-            "X-Tunnel-Skip-Anti-Phishing-Page": "1"
-          },
-          body: JSON.stringify({
-            place_id: currentPlaceId,
-            place_name: placeData.name,
-            comment: comment,
-            contact: contact
-          })
-        });
-
-        if (!response.ok) {
-          throw new Error("HTTP код " + response.status);
-        }
-
-        document.getElementById('feedback-section').style.display = 'none';
-        document.getElementById('main-content').style.display = 'none';
-        document.getElementById('success-message').style.display = 'block';
-
-      } catch (error) {
-        submitBtn.disabled = false;
-        submitBtn.innerText = "Отправить руководству";
-        alert("Ошибка сети (" + error.message + "). Проверьте туннель и запуск бота.");
-      }
-    }
+    });
   </script>
 </body>
 </html>
