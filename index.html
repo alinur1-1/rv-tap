@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Оцените наш сервис</title>
+  <title>Reviews Tap — Оцените наш сервис</title>
   <style>
     :root {
       --bg: #f8fafc;
@@ -43,12 +43,14 @@
       text-align: center;
     }
 
-    .logo {
-      width: 64px;
-      height: 64px;
-      margin-bottom: 16px;
-      border-radius: 50%;
+    .logo-img {
+      width: 72px;
+      height: 72px;
+      margin: 0 auto 16px auto;
+      border-radius: 16px;
       object-fit: cover;
+      display: block;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     }
 
     h1 {
@@ -188,7 +190,8 @@
 
   <div class="card">
     <div id="main-content">
-      <img src="https://via.placeholder.com/80" alt="Логотип" class="logo">
+      <!-- Логотип Reviews Tap -->
+      <img src="logo.jpg" alt="Reviews Tap" class="logo-img" onerror="this.src='https://via.placeholder.com/80?text=RT'">
       <h1 id="place-title">Вам всё понравилось?</h1>
       <p class="subtitle">Ваш отзыв помогает нам становиться лучше каждый день</p>
 
@@ -198,7 +201,7 @@
       </div>
     </div>
 
-    <!-- Форма отрицательного отзыва -->
+    <!-- Форма негативного отзыва -->
     <div id="feedback-section">
       <h2 style="font-size: 16px; margin-bottom: 12px;">Расскажите, что пошло не так?</h2>
       
@@ -221,31 +224,34 @@
     </div>
 
     <div id="success-message">
-      Спасибо! Сообщение отправлено руководству. Мы свяжемся с вами в течение 15 минут, чтобы исправить ситуацию.
+      Спасибо! Сообщение отправлено управляющему. Мы свяжемся с вами в течение 15 минут, чтобы исправить ситуацию.
     </div>
   </div>
 
   <script>
-    // ================= СПИСОК ЗАВЕДЕНИЙ И ССЫЛОК =================
-    const NEW_TWOGIS_URL = "https://2gis.kz/almaty/geo/70000001116117394?inv_by=ac28da18000a47658477956c82e8772f&inv_ts=1792294358";
-
+    // ================= БАЗА ЗАВЕДЕНИЙ =================
     const PLACES = {
       "default": {
         name: "Reviews Tap Demo",
-        twogis_url: NEW_TWOGIS_URL
+        twogis_url: "https://2gis.kz/almaty/geo/70000001116117394?inv_by=ac28da18000a47658477956c82e8772f&inv_ts=1792294358"
       },
       "cafe1": {
-        name: "Филиал на Аль-Фараби",
-        twogis_url: NEW_TWOGIS_URL
+        name: "Кофейня Almaty",
+        twogis_url: "https://2gis.kz/almaty/geo/70000001116117394?inv_by=ac28da18000a47658477956c82e8772f&inv_ts=1792294358"
+      },
+      "dostyk_burger": {
+        name: "Dostyk Burger Bar",
+        twogis_url: "https://2gis.kz/almaty"
       }
     };
 
+    // Читаем филиал из URL (?place=cafe1)
     const urlParams = new URLSearchParams(window.location.search);
     const currentPlaceId = urlParams.get('place') || 'default';
     const placeData = PLACES[currentPlaceId] || PLACES['default'];
 
-    // Вставьте актуальный URL туннеля или вашего внешнего сервера
-    const API_ENDPOINT = "https://8w8slp2v-8080.eun1.devtunnels.ms/";
+    // ВАШ ТУННЕЛЬ DEV TUNNELS
+    const API_ENDPOINT = "https://8w8slp2v-8080.eun1.devtunnels.ms/api/feedback";
 
     document.getElementById('place-title').innerText = `Вам всё понравилось в ${placeData.name}?`;
     document.getElementById('direct-map-link').href = placeData.twogis_url;
@@ -277,7 +283,7 @@
       }
 
       if (!comment) {
-        alert("Пожалуйста, опишите проблему.");
+        alert("Пожалуйста, опишите причину обращения.");
         return;
       }
 
@@ -287,6 +293,7 @@
       try {
         const response = await fetch(API_ENDPOINT, {
           method: "POST",
+          mode: "cors",
           headers: { 
             "Content-Type": "application/json",
             "X-Tunnel-Skip-Anti-Phishing-Page": "1"
@@ -300,7 +307,7 @@
         });
 
         if (!response.ok) {
-          throw new Error("Код ответа: " + response.status);
+          throw new Error("HTTP код " + response.status);
         }
 
         document.getElementById('feedback-section').style.display = 'none';
@@ -310,7 +317,7 @@
       } catch (error) {
         submitBtn.disabled = false;
         submitBtn.innerText = "Отправить руководству";
-        alert("Ошибка отправки: " + error.message + ". Проверьте, запущен ли бот и активен ли туннель.");
+        alert("Ошибка сети (" + error.message + "). Проверьте туннель и запуск бота.");
       }
     }
   </script>
