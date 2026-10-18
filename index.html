@@ -83,6 +83,7 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
+      text-decoration: none;
       transition: transform 0.1s ease;
     }
 
@@ -195,11 +196,13 @@
       <p class="subtitle">Ваш отзыв помогает нам становиться лучше каждый день</p>
 
       <div class="btn-group" id="buttons-container">
-        <button type="button" class="btn btn-yes" id="btn-yes">👍 Да</button>
-        <button type="button" class="btn btn-no" id="btn-no">👎 Нет</button>
+        <!-- Прямая ссылка: всегда открывает 2GIS в новой вкладке -->
+        <a id="btn-yes" href="https://2gis.kz/almaty/firm/70000001078537616/tab/reviews/addreview" target="_blank" rel="noopener noreferrer" class="btn btn-yes">👍 Да</a>
+        <button type="button" class="btn btn-no" onclick="openFeedbackForm()">👎 Нет</button>
       </div>
     </div>
 
+    <!-- Блок негативного отзыва -->
     <div id="feedback-section">
       <h2 style="font-size: 16px; margin-bottom: 12px;">Расскажите, что пошло не так?</h2>
       
@@ -210,15 +213,15 @@
       <input type="text" id="contact" placeholder="+7 (7xx) xxx-xx-xx">
 
       <div class="consent-box">
-        <input type="checkbox" id="consent-check">
+        <input type="checkbox" id="consent-check" onchange="toggleSubmitBtn()">
         <label for="consent-check">
           Я согласен(на) на обработку персональных данных (номера телефона) для связи со мной администрацией заведения.
         </label>
       </div>
 
-      <button type="button" id="submit-btn" class="btn-submit" disabled>Отправить руководству</button>
+      <button type="button" id="submit-btn" class="btn-submit" onclick="sendFeedback()" disabled>Отправить руководству</button>
       
-      <a id="direct-map-link" class="soft-link" href="#">Все равно перейти в 2GIS</a>
+      <a id="direct-map-link" class="soft-link" href="https://2gis.kz/almaty/firm/70000001078537616/tab/reviews/addreview" target="_blank" rel="noopener noreferrer">Все равно перейти в 2GIS</a>
     </div>
 
     <div id="success-message">
@@ -227,11 +230,98 @@
   </div>
 
   <script>
+    const DEFAULT_2GIS = "https://2gis.kz/almaty/firm/70000001078537616/tab/reviews/addreview";
+
+    // База всех заведений
     const PLACES = {
       "default": {
         name: "Reviews Tap Demo",
-        twogis_url: "https://2gis.kz/almaty/geo/70000001116117394?inv_by=ac28da18000a47658477956c82e8772f&inv_ts=1792294358"
+        twogis_url: DEFAULT_2GIS
       },
       "cafe1": {
         name: "Кофейня Almaty",
-        twogis_url: "
+        twogis_url: DEFAULT_2GIS
+      },
+      "dostyk_burger": {
+        name: "Dostyk Burger Bar",
+        twogis_url: DEFAULT_2GIS
+      }
+    };
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentPlaceId = urlParams.get('place') || 'default';
+    const placeData = PLACES[currentPlaceId] || PLACES['default'];
+
+    // Адрес туннеля к боту
+    const API_ENDPOINT = "https://8w8slp2v-8080.eun1.devtunnels.ms/api/feedback";
+
+    // Устанавливаем название точки и ссылки на 2GIS
+    document.getElementById('place-title').innerText = "Вам всё понравилось в " + placeData.name + "?";
+    document.getElementById('btn-yes').href = placeData.twogis_url;
+    document.getElementById('direct-map-link').href = placeData.twogis_url;
+
+    // Открытие формы жалобы по нажатию "Нет"
+    function openFeedbackForm() {
+      document.getElementById('buttons-container').style.display = 'none';
+      document.getElementById('feedback-section').style.display = 'block';
+    }
+
+    // Активация кнопки отправки при клике на галочку
+    function toggleSubmitBtn() {
+      const check = document.getElementById('consent-check');
+      document.getElementById('submit-btn').disabled = !check.checked;
+    }
+
+    // Отправка жалобы боту
+    async function sendFeedback() {
+      const comment = document.getElementById('comment').value.trim();
+      const contact = document.getElementById('contact').value.trim();
+      const consent = document.getElementById('consent-check').checked;
+      const submitBtn = document.getElementById('submit-btn');
+
+      if (!consent) {
+        alert("Подтвердите согласие на обработку данных.");
+        return;
+      }
+
+      if (!comment) {
+        alert("Пожалуйста, опишите ситуацию.");
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.innerText = "Отправка...";
+
+      try {
+        const response = await fetch(API_ENDPOINT, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Tunnel-Skip-Anti-Phishing-Page": "1"
+          },
+          body: JSON.stringify({
+            place_id: currentPlaceId,
+            place_name: placeData.name,
+            comment: comment,
+            contact: contact
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error("Код ответа: " + response.status);
+        }
+
+        document.getElementById('feedback-section').style.display = 'none';
+        document.getElementById('main-content').style.display = 'none';
+        document.getElementById('success-message').style.display = 'block';
+
+      } catch (error) {
+        console.error(error);
+        submitBtn.disabled = false;
+        submitBtn.innerText = "Отправить руководству";
+        alert("Ошибка отправки: " + error.message);
+      }
+    }
+  </script>
+</body>
+</html>
