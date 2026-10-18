@@ -271,7 +271,7 @@
       submitBtn.disabled = !checkbox.checked;
     }
 
-    async function sendComplaint() {
+   async function sendComplaint() {
       const comment = document.getElementById('comment').value.trim();
       const contact = document.getElementById('contact').value.trim();
       const consent = document.getElementById('consent-check').checked;
@@ -287,6 +287,37 @@
         return;
       }
 
+      submitBtn.disabled = true;
+      submitBtn.innerText = "Отправка...";
+
+      const payload = JSON.stringify({
+        place_id: currentPlaceId,
+        place_name: placeData.name,
+        comment: comment,
+        contact: contact
+      });
+
+      try {
+        // Отправляем как text/plain, чтобы обойти блокировку preflight OPTIONS в туннеле
+        const response = await fetch(API_ENDPOINT, {
+          method: "POST",
+          headers: {
+            "Content-Type": "text/plain;charset=UTF-8"
+          },
+          body: payload
+        });
+
+        document.getElementById('feedback-section').style.display = 'none';
+        document.getElementById('main-content').style.display = 'none';
+        document.getElementById('success-message').style.display = 'block';
+
+      } catch (error) {
+        console.error(error);
+        submitBtn.disabled = false;
+        submitBtn.innerText = "Отправить руководству";
+        alert("Ошибка сети (" + error.message + "). Проверьте запуск бота в терминале.");
+      }
+    }
       submitBtn.disabled = true;
       submitBtn.innerText = "Отправка...";
 
