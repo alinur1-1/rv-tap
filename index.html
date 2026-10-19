@@ -302,33 +302,25 @@
   </div>
 
   <script>
-    // -------------------------------------------------------------
     // РЕЕСТР ЗАВЕДЕНИЙ
-    // Добавляйте сюда новые точки. Каждой можно задать своё название,
-    // ссылку на 2GIS и отдельный chat_id, если они разные.
-    // -------------------------------------------------------------
     const VENUES = {
       "default": {
         name: "Legenda",
-        gisUrl: "https://2gis.kz/almaty/firm/70000001078537616/tab/reviews/addreview",
-        chatId: "5904604582"
+        gisUrl: "https://2gis.kz/almaty/firm/70000001078537616/tab/reviews/addreview"
       },
       "coffee_hub": {
         name: "Кульджо хого",
-        gisUrl: "https://2gis.kz/almaty/firm/70000001116117394/tab/reviews/addreview",
-        chatId: "1046554693"
+        gisUrl: "https://2gis.kz/almaty/firm/70000001116117394/tab/reviews/addreview"
       },
       "burger_bar": {
         name: "Burger Bar Dostyk",
-        gisUrl: "https://2gis.kz/almaty/firm/70000001078537616/tab/reviews",
-        chatId: "5904604582"
+        gisUrl: "https://2gis.kz/almaty/firm/70000001078537616/tab/reviews"
       }
     };
 
-    const BOT_TOKEN = "8817952265:AAFCddec3U3yM9eoGr_M1B4_7SUHnQkmo5o";
-
-    // Определение заведения из URL: ?v=slug (например, ?v=coffee_hub)
-    const urlParams = new URLSearchParams(window.location.search);
+    // Определение заведения из URL: ?v=slug
+    const searchStr = window.location.search || window.location.hash.replace(/^#\??/, '?');
+    const urlParams = new URLSearchParams(searchStr);
     const venueSlug = urlParams.get('v') || 'default';
     const currentVenue = VENUES[venueSlug] || VENUES['default'];
 
@@ -355,7 +347,7 @@
       submitBtn.disabled = !consentCheck.checked;
     });
 
-    // Обработка отправки жалобы в Telegram
+    // Обработка отправки жалобы на бэкенд бота (/api/send-lead)
     document.getElementById('feedback-form').addEventListener('submit', async (e) => {
       e.preventDefault();
 
@@ -365,39 +357,30 @@
       const text = document.getElementById('feedback-text').value.trim();
       const contact = document.getElementById('feedback-contact').value.trim();
 
-      const message = `
-⚠️ <b>Негативный отзыв / Жалоба!</b>
-📍 <b>Заведение:</b> ${currentVenue.name} (<code>${venueSlug}</code>)
-
-📝 <b>Проблема:</b>
-${text}
-
-👤 <b>Контакт клиента:</b> ${contact}
-      `.trim();
-
       try {
-        const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+        const response = await fetch('http://localhost:8080/api/send-lead', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            chat_id: currentVenue.chatId,
-            text: message,
-            parse_mode: 'HTML'
+            place_id: venueSlug,
+            place_name: currentVenue.name,
+            comment: text,
+            contact: contact
           })
         });
 
         const data = await response.json();
 
-        if (data.ok) {
+        if (response.ok && data.status === "ok") {
           complaintScreen.style.display = 'none';
           successScreen.style.display = 'block';
         } else {
-          alert('Ошибка отправки: ' + data.description);
+          alert('Ошибка отправки: ' + (data.error || 'Неизвестная ошибка'));
           submitBtn.disabled = false;
           submitBtn.textContent = "Отправить обращение";
         }
       } catch (err) {
-        alert('Ошибка сети при отправке обращения');
+        alert('Ошибка сети: не удалось связаться с сервером бота на порту 8080.');
         submitBtn.disabled = false;
         submitBtn.textContent = "Отправить обращение";
       }
