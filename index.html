@@ -226,8 +226,8 @@
       const contact = document.getElementById('feedback-contact').value.trim();
 
       try {
-        // Отправляем структурированные данные на сервер бота (порт 8081)
-        const response = await fetch('http://localhost:8081/api/send-lead', {
+        // Отправляем структурированные данные на сервер бота (порт 8080)
+        const response = await fetch('http://localhost:8080/api/send-lead', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -249,7 +249,7 @@
           submitBtn.textContent = "Отправить обращение";
         }
       } catch (err) {
-        alert('Ошибка сети: проверьте, запущен ли bot.py (порт 8081)');
+        alert('Ошибка сети: проверьте, запущен ли bot.py (порт 8080)');
         submitBtn.disabled = false;
         submitBtn.textContent = "Отправить обращение";
       }
