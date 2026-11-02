@@ -3,29 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>ReviewsTap — Оценка качества обслуживания</title>
+  <title>Оценка качества обслуживания</title>
   <style>
     :root {
       --primary: #10b981;
+      --danger: #ef4444;
       --star-active: #fbbf24;
       --star-inactive: #e2e8f0;
-      --bg: #f1f5f9;
+      --bg: #f8fafc;
       --card-bg: #ffffff;
       --text-main: #0f172a;
       --text-muted: #64748b;
       --border: #e2e8f0;
-      --accent: #0f172a;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      -webkit-tap-highlight-color: transparent;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       background: radial-gradient(circle at top, #f8fafc 0%, #e2e8f0 100%);
       color: var(--text-main);
       display: flex;
@@ -39,35 +34,32 @@
       background: var(--card-bg);
       width: 100%;
       max-width: 420px;
-      padding: 28px 24px 34px;
+      padding: 28px 24px 32px;
       border-radius: 24px;
       box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.08), 0 0 1px 1px rgba(15, 23, 42, 0.03);
       text-align: center;
       position: relative;
-      transition: all 0.3s ease;
     }
 
-    /* Шапка карточки: бейдж заведения + переключатель языка */
+    /* Верхняя панель: Бейдж заведения + Язык */
     .card-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 24px;
+      margin-bottom: 22px;
     }
 
     .venue-badge {
-      display: inline-flex;
-      align-items: center;
+      display: inline-block;
       font-size: 13px;
       font-weight: 700;
-      letter-spacing: 0.3px;
       color: var(--text-main);
       background: #f1f5f9;
       padding: 6px 14px;
-      border-radius: 999px;
+      border-radius: 20px;
     }
 
-    /* Выпадающий список языков */
+    /* Переключатель языков */
     .lang-dropdown {
       position: relative;
       user-select: none;
@@ -86,12 +78,10 @@
       font-weight: 700;
       color: var(--text-main);
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.2s;
     }
 
-    .lang-btn:hover {
-      background: #f1f5f9;
-    }
+    .lang-btn:hover { background: #f1f5f9; }
 
     .lang-arrow {
       width: 14px;
@@ -120,7 +110,6 @@
 
     .lang-dropdown.open .lang-menu {
       display: flex;
-      animation: fadeIn 0.18s ease;
     }
 
     .lang-option {
@@ -132,39 +121,19 @@
       border: none;
       text-align: left;
       cursor: pointer;
-      transition: background 0.15s, color 0.15s;
     }
 
-    .lang-option:hover {
-      background: #f8fafc;
-      color: var(--text-main);
-    }
+    .lang-option:hover { background: #f8fafc; color: var(--text-main); }
+    .lang-option.active { color: var(--primary); background: #ecfdf5; }
 
-    .lang-option.active {
-      color: var(--primary);
-      background: #ecfdf5;
-    }
+    h2 { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+    p.subtitle { font-size: 15px; color: var(--text-muted); margin-bottom: 26px; line-height: 1.4; }
 
-    /* Текстовые стили */
-    h2 {
-      font-size: 23px;
-      font-weight: 800;
-      margin-bottom: 8px;
-      letter-spacing: -0.3px;
-    }
-
-    p.subtitle {
-      font-size: 15px;
-      color: var(--text-muted);
-      margin-bottom: 28px;
-      line-height: 1.45;
-    }
-
-    /* 5 Звезд */
+    /* Звезды (1-5) */
     .stars-wrapper {
       display: flex;
       justify-content: center;
-      gap: 10px;
+      gap: 8px;
       margin-bottom: 14px;
     }
 
@@ -173,8 +142,8 @@
       border: none;
       cursor: pointer;
       padding: 4px;
-      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
       color: var(--star-inactive);
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
     .star-btn svg {
@@ -193,24 +162,15 @@
       filter: drop-shadow(0 4px 10px rgba(251, 191, 36, 0.35));
     }
 
-    .star-btn:active {
-      transform: scale(0.95);
-    }
-
     .rating-hint {
       min-height: 20px;
       font-size: 14px;
       font-weight: 600;
       color: var(--text-muted);
-      transition: color 0.2s;
     }
 
-    /* Экран жалобы */
-    #complaint-screen {
-      display: none;
-      text-align: left;
-      animation: fadeIn 0.25s ease;
-    }
+    /* Экран фиксации проблемы */
+    #complaint-screen { display: none; text-align: left; }
 
     .selected-rating-pill {
       display: inline-flex;
@@ -222,90 +182,40 @@
       background: #fef3c7;
       padding: 5px 12px;
       border-radius: 999px;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
 
-    .form-group {
-      margin-bottom: 16px;
-    }
-
-    label {
-      display: block;
-      font-size: 13px;
-      font-weight: 700;
-      margin-bottom: 6px;
-      color: #334155;
-    }
-
+    .form-group { margin-bottom: 16px; }
+    label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 6px; color: #334155; }
     textarea, input[type="text"] {
-      width: 100%;
-      padding: 13px 14px;
-      border-radius: 12px;
-      border: 1.5px solid var(--border);
-      font-size: 15px;
+      width: 100%; padding: 12px 14px; border-radius: 12px;
+      border: 1px solid var(--border); font-size: 15px; background: #f8fafc; outline: none;
       font-family: inherit;
-      background: #f8fafc;
-      color: var(--text-main);
-      outline: none;
-      transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
     }
-
-    textarea:focus, input[type="text"]:focus {
-      border-color: var(--accent);
-      background: #ffffff;
-      box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.06);
-    }
-
-    textarea {
-      resize: none;
-      height: 105px;
-    }
+    textarea:focus, input[type="text"]:focus { border-color: #0f172a; background: #fff; }
+    textarea { resize: none; height: 100px; }
 
     .checkbox-container {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      margin: 18px 0 22px;
-      cursor: pointer;
-      user-select: none;
+      display: flex; align-items: flex-start; gap: 10px; margin: 16px 0 20px;
     }
-
     .checkbox-container input {
-      margin-top: 2px;
-      width: 18px;
-      height: 18px;
-      accent-color: var(--accent);
-      cursor: pointer;
+      margin-top: 3px; width: 17px; height: 17px; accent-color: #0f172a; cursor: pointer; flex-shrink: 0;
     }
-
-    .checkbox-container span {
-      font-size: 13px;
-      color: var(--text-muted);
-      line-height: 1.4;
-      font-weight: 500;
+    .checkbox-text {
+      font-size: 13px; color: var(--text-muted); line-height: 1.4;
+    }
+    .privacy-trigger {
+      color: #0284c7;
+      text-decoration: underline;
+      cursor: pointer;
+      font-weight: 600;
     }
 
     .btn-submit {
-      width: 100%;
-      padding: 15px;
-      background: var(--accent);
-      color: #ffffff;
-      border: none;
-      border-radius: 14px;
-      font-size: 16px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: opacity 0.2s, transform 0.1s;
+      width: 100%; padding: 14px; background: #0f172a; color: #fff;
+      border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer;
     }
-
-    .btn-submit:active:not(:disabled) {
-      transform: scale(0.99);
-    }
-
-    .btn-submit:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-    }
+    .btn-submit:disabled { opacity: 0.4; cursor: not-allowed; }
 
     .bottom-links {
       display: flex;
@@ -317,61 +227,114 @@
     }
 
     .back-btn {
-      background: none;
+      background: none; border: none; font-size: 14px; font-weight: 600;
+      color: var(--text-muted); cursor: pointer;
+    }
+
+    .fallback-link {
+      font-size: 14px; color: #0284c7; text-decoration: underline; font-weight: 500;
+    }
+
+    #success-screen { display: none; }
+
+    .choice-icon {
+      width: 52px; height: 52px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 16px;
+      background: #d1fae5; color: #10b981;
+    }
+
+    /* Модальное окно Политики Конфиденциальности */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.55);
+      backdrop-filter: blur(3px);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+      z-index: 100;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-box {
+      background: #ffffff;
+      width: 100%;
+      max-width: 400px;
+      border-radius: 20px;
+      padding: 24px 20px 20px;
+      text-align: left;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .modal-header h3 {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .modal-close-x {
+      background: #f1f5f9;
       border: none;
-      font-size: 14px;
-      font-weight: 600;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      font-size: 16px;
+      font-weight: 700;
       color: var(--text-muted);
       cursor: pointer;
     }
 
-    .back-btn:hover {
-      color: var(--text-main);
+    .modal-body {
+      font-size: 13.5px;
+      color: #334155;
+      line-height: 1.55;
+      overflow-y: auto;
+      padding-right: 4px;
     }
 
-    .fallback-link {
+    .modal-body p { margin-bottom: 10px; }
+    .modal-body ul { margin: 6px 0 12px 18px; }
+    .modal-body li { margin-bottom: 6px; }
+    .modal-body strong { color: var(--text-main); }
+
+    .modal-btn-close {
+      margin-top: 16px;
+      width: 100%;
+      padding: 12px;
+      background: #0f172a;
+      color: #ffffff;
+      border: none;
+      border-radius: 12px;
       font-size: 14px;
-      color: #0284c7;
-      text-decoration: none;
       font-weight: 600;
-    }
-
-    .fallback-link:hover {
-      text-decoration: underline;
-    }
-
-    /* Экран благодарности */
-    #success-screen {
-      display: none;
-      padding: 12px 0;
-      animation: fadeIn 0.25s ease;
-    }
-
-    .success-icon {
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      background: #d1fae5;
-      color: var(--primary);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 18px;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(6px); }
-      to { opacity: 1; transform: translateY(0); }
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
 
   <div class="card">
-    <!-- Шапка с названием и выбором языка -->
     <div class="card-header">
       <div id="venue-name" class="venue-badge">ReviewsTap</div>
 
+      <!-- Выбор языка (RUS / KAZ / ENG) -->
       <div class="lang-dropdown" id="lang-dropdown">
         <button type="button" class="lang-btn" id="lang-btn">
           <span id="current-lang-label">RUS</span>
@@ -387,33 +350,23 @@
       </div>
     </div>
 
-    <!-- 1. Экран выбора звезд -->
+    <!-- 1. Экран оценки (5 звезд) -->
     <div id="choice-screen">
       <h2 id="t-title">Вам всё понравилось?</h2>
       <p class="subtitle" id="t-subtitle">Пожалуйста, оцените наш сервис</p>
 
-      <div class="stars-wrapper" id="stars-container">
-        <button type="button" class="star-btn" data-value="1" aria-label="1 star">
-          <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-        </button>
-        <button type="button" class="star-btn" data-value="2" aria-label="2 stars">
-          <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-        </button>
-        <button type="button" class="star-btn" data-value="3" aria-label="3 stars">
-          <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-        </button>
-        <button type="button" class="star-btn" data-value="4" aria-label="4 stars">
-          <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-        </button>
-        <button type="button" class="star-btn" data-value="5" aria-label="5 stars">
-          <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-        </button>
+      <div class="stars-wrapper">
+        <button type="button" class="star-btn" data-value="1"><svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></button>
+        <button type="button" class="star-btn" data-value="2"><svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></button>
+        <button type="button" class="star-btn" data-value="3"><svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></button>
+        <button type="button" class="star-btn" data-value="4"><svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></button>
+        <button type="button" class="star-btn" data-value="5"><svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></button>
       </div>
 
       <div class="rating-hint" id="rating-hint">Нажмите на звезду</div>
     </div>
 
-    <!-- 2. Экран фиксации проблемы (1-3 звезды) -->
+    <!-- 2. Экран фиксации проблемы -->
     <div id="complaint-screen">
       <div class="selected-rating-pill">
         <span>★</span>
@@ -434,10 +387,13 @@
           <input type="text" id="feedback-contact" placeholder="+7 707 ... или @username" required>
         </div>
 
-        <label class="checkbox-container">
+        <div class="checkbox-container">
           <input type="checkbox" id="consent-check" required>
-          <span id="t-consent">Даю согласие на обработку персональных данных</span>
-        </label>
+          <div class="checkbox-text">
+            <label for="consent-check" id="t-consent" style="display:inline; font-weight:400; color:inherit; cursor:pointer;">Даю согласие на обработку персональных данных и принимаю </label>
+            <span class="privacy-trigger" id="open-privacy">Политику конфиденциальности</span>
+          </div>
+        </div>
 
         <button type="submit" id="submit-btn" class="btn-submit" disabled>Отправить обращение</button>
       </form>
@@ -450,18 +406,28 @@
 
     <!-- 3. Экран благодарности -->
     <div id="success-screen">
-      <div class="success-icon">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <polyline points="20 6 9 17 4 12"></polyline>
-        </svg>
+      <div class="choice-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
       </div>
       <h2 id="t-success-title">Спасибо за отзыв!</h2>
       <p class="subtitle" id="t-success-subtitle" style="margin-bottom: 0;">Ваше сообщение передано руководству. Мы свяжемся с вами.</p>
     </div>
   </div>
 
+  <!-- Модальное окно Политики конфиденциальности -->
+  <div class="modal-overlay" id="privacy-modal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="t-modal-title">Политика конфиденциальности</h3>
+        <button type="button" class="modal-close-x" id="close-privacy-x">✕</button>
+      </div>
+      <div class="modal-body" id="t-modal-body"></div>
+      <button type="button" class="modal-btn-close" id="close-privacy-btn">Понятно</button>
+    </div>
+  </div>
+
   <script>
-    // РЕЕСТР ЗАВЕДЕНИЙ
+    // РЕЕСТР ЗАВЕДЕНИЙ (ключи строго в нижнем регистре без пробелов, 100% совпадение с БД бота)
     const VENUES = {
       "legenda": {
         name: "Legenda",
@@ -485,6 +451,18 @@
       }
     };
 
+    // Определение заведения из URL (?v=voronka, ?v=legenda и т.д.)
+    const searchStr = window.location.search || window.location.hash.replace(/^#\??/, '?');
+    const urlParams = new URLSearchParams(searchStr);
+    const rawSlug = (urlParams.get('v') || 'legenda').trim().toLowerCase();
+
+    // Если передали неизвестный ключ или открыли без ?v=, берем 'legenda'
+    const venueSlug = VENUES[rawSlug] ? rawSlug : 'legenda';
+    const currentVenue = VENUES[venueSlug];
+
+    document.getElementById('venue-name').textContent = currentVenue.name;
+    document.getElementById('link-fallback').href = currentVenue.gisUrl;
+
     // СЛОВАРЬ ПЕРЕВОДОВ (RUS / KAZ / ENG)
     const I18N = {
       ru: {
@@ -500,15 +478,35 @@
         placeholderProblem: "Опишите детали ситуации...",
         labelContact: "Ваш номер или Instagram",
         placeholderContact: "+7 707 ... или @username",
-        consent: "Даю согласие на обработку персональных данных",
+        consent: "Даю согласие на обработку персональных данных и принимаю ",
+        privacyLink: "Политику конфиденциальности",
         submit: "Отправить обращение",
         sending: "Отправка...",
         back: "← Назад",
         fallback: "Всё равно перейти в 2ГИС",
         successTitle: "Спасибо за отзыв!",
         successSubtitle: "Ваше сообщение передано руководству. Мы свяжемся с вами.",
-        errSend: "Ошибка отправки: ",
-        errNet: "Ошибка сети: проверьте соединение или сервер бота"
+        modalTitle: "Политика конфиденциальности",
+        modalBtn: "Понятно",
+        modalBody: (vName) => `
+          <p>Мы уважаем вашу конфиденциальность. Оставляя свои контактные данные в сервисе <strong>ReviewsTap</strong> для заведения <strong>${vName}</strong>, вы даёте согласие на их обработку на следующих условиях:</p>
+          <p><strong>1. Какие данные мы собираем:</strong></p>
+          <ul>
+            <li>Указанный вами номер телефона или никнейм в Instagram;</li>
+            <li>Текст вашего отзыва и выбранную оценку обслуживания.</li>
+          </ul>
+          <p><strong>2. Где и как используется ваш номер / контакт:</strong></p>
+          <ul>
+            <li>Контакт передаётся по защищённому каналу напрямую управляющему или владельцу заведения <strong>${vName}</strong>;</li>
+            <li>Ваш номер используется <strong>исключительно для обратной связи</strong> с вами: чтобы уточнить детали инцидента, принести извинения, решить проблему или предложить бонус/компенсацию.</li>
+          </ul>
+          <p><strong>3. Гарантия безопасности (Без спама):</strong></p>
+          <ul>
+            <li>Ваш номер <strong>не публикуется</strong> в открытом доступе;</li>
+            <li>Мы <strong>не используем</strong> ваши контакты для рекламных рассылок, спама и не передаём их третьим лицам.</li>
+          </ul>
+          <p>Обработка осуществляется в соответствии с Законом Республики Казахстан «О персональных данных и их защите».</p>
+        `
       },
       kk: {
         code: "KAZ",
@@ -523,15 +521,35 @@
         placeholderProblem: "Жағдайды толығырақ жазыңыз...",
         labelContact: "Сіздің нөміріңіз немесе Instagram",
         placeholderContact: "+7 707 ... немесе @username",
-        consent: "Дербес деректерді өңдеуге келісім беремін",
+        consent: "Дербес деректерді өңдеуге келісім беремін және ",
+        privacyLink: "Құпиялылық саясатын қабылдаймын",
         submit: "Өтінішті жіберу",
         sending: "Жіберілуде...",
         back: "← Артқа",
         fallback: "Бәрібір 2ГИС-ке өту",
         successTitle: "Пікіріңізге рахмет!",
         successSubtitle: "Хабарламаңыз басшылыққа жіберілді. Біз сізбен хабарласамыз.",
-        errSend: "Жіберу қатесі: ",
-        errNet: "Желі қатесі: интернетті немесе бот серверін тексеріңіз"
+        modalTitle: "Құпиялылық саясаты",
+        modalBtn: "Түсінікті",
+        modalBody: (vName) => `
+          <p>Біз сіздің құпиялылығыңызды құрметтейміз. <strong>${vName}</strong> мекемесіне арналған <strong>ReviewsTap</strong> сервисінде байланыс деректеріңізді қалдыра отырып, оларды келесі шарттарда өңдеуге келісім бересіз:</p>
+          <p><strong>1. Қандай деректер жиналады:</strong></p>
+          <ul>
+            <li>Сіз көрсеткен телефон нөмірі немесе Instagram парақшаңыз;</li>
+            <li>Пікіріңіздің мәтіні мен қойған бағаңыз.</li>
+          </ul>
+          <p><strong>2. Нөміріңіз қайда және қалай қолданылады:</strong></p>
+          <ul>
+            <li>Байланыс нөмірі тікелей <strong>${vName}</strong> мекемесінің басшылығына немесе иесіне ғана жіберіледі;</li>
+            <li>Нөміріңіз <strong>тек сізбен кері байланыс орнату үшін</strong> қолданылады: жағдайды нақтылау, мәселені шешу немесе бонус/өтемақы ұсыну үшін.</li>
+          </ul>
+          <p><strong>3. Қауіпсіздік кепілдігі (Спамсыз):</strong></p>
+          <ul>
+            <li>Нөміріңіз ашық түрде еш жерде <strong>жарияланбайды</strong>;</li>
+            <li>Біз сіздің нөміріңізді жарнамалық хабарламалар мен спам үшін <strong>пайдаланбаймыз</strong> және үшінші тұлғаларға бермейміз.</li>
+          </ul>
+          <p>Деректерді өңдеу Қазақстан Республикасының «Дербес деректер және оларды қорғау туралы» Заңына сәйкес жүзеге асырылады.</p>
+        `
       },
       en: {
         code: "ENG",
@@ -546,30 +564,39 @@
         placeholderProblem: "Please describe the details...",
         labelContact: "Your phone or Instagram",
         placeholderContact: "+7 707 ... or @username",
-        consent: "I agree to the processing of personal data",
+        consent: "I agree to the processing of personal data and accept the ",
+        privacyLink: "Privacy Policy",
         submit: "Send feedback",
         sending: "Sending...",
         back: "← Back",
         fallback: "Go to 2GIS anyway",
         successTitle: "Thank you for your feedback!",
         successSubtitle: "Your message has been sent to management. We will contact you soon.",
-        errSend: "Submission error: ",
-        errNet: "Network error: please check your connection"
+        modalTitle: "Privacy Policy",
+        modalBtn: "Got it",
+        modalBody: (vName) => `
+          <p>We respect your privacy. By providing your contact details via <strong>ReviewsTap</strong> for <strong>${vName}</strong>, you agree to their processing under the following terms:</p>
+          <p><strong>1. What data we collect:</strong></p>
+          <ul>
+            <li>Your phone number or Instagram username;</li>
+            <li>Your feedback message and service rating.</li>
+          </ul>
+          <p><strong>2. Where and how your contact is used:</strong></p>
+          <ul>
+            <li>Your contact is sent securely and directly to the management of <strong>${vName}</strong>;</li>
+            <li>It is used <strong>strictly to contact you back</strong> regarding your visit: to clarify details, resolve the issue, or offer compensation.</li>
+          </ul>
+          <p><strong>3. No Spam Guarantee:</strong></p>
+          <ul>
+            <li>Your phone number is <strong>never published</strong> publicly;</li>
+            <li>We <strong>do not use</strong> your contact for marketing/spam and never share it with third parties.</li>
+          </ul>
+        `
       }
     };
 
     let currentLang = 'ru';
     let selectedRating = 0;
-
-    // Определение заведения из URL (?v=legenda)
-    const searchStr = window.location.search || window.location.hash.replace(/^#\??/, '?');
-    const urlParams = new URLSearchParams(searchStr);
-    const rawSlug = (urlParams.get('v') || 'legenda').trim().toLowerCase();
-    const venueSlug = VENUES[rawSlug] ? rawSlug : 'legenda';
-    const currentVenue = VENUES[venueSlug];
-
-    document.getElementById('venue-name').textContent = currentVenue.name;
-    document.getElementById('link-fallback').href = currentVenue.gisUrl;
 
     const choiceScreen = document.getElementById('choice-screen');
     const complaintScreen = document.getElementById('complaint-screen');
@@ -577,7 +604,7 @@
     const ratingHint = document.getElementById('rating-hint');
     const starBtns = document.querySelectorAll('.star-btn');
 
-    // ЛОГИКА ВЫПАДАЮЩЕГО СПИСКА ЯЗЫКОВ
+    // ВЫПАДАЮЩИЙ СПИСОК ЯЗЫКОВ
     const langDropdown = document.getElementById('lang-dropdown');
     const langBtn = document.getElementById('lang-btn');
     const langOptions = document.querySelectorAll('.lang-option');
@@ -593,8 +620,7 @@
 
     langOptions.forEach(opt => {
       opt.addEventListener('click', () => {
-        const lang = opt.dataset.lang;
-        setLanguage(lang);
+        setLanguage(opt.dataset.lang);
         langDropdown.classList.remove('open');
       });
     });
@@ -605,7 +631,6 @@
 
       document.documentElement.lang = lang;
       document.getElementById('current-lang-label').textContent = t.code;
-
       langOptions.forEach(o => o.classList.toggle('active', o.dataset.lang === lang));
 
       document.getElementById('t-title').textContent = t.title;
@@ -623,12 +648,34 @@
       document.getElementById('t-label-contact').textContent = t.labelContact;
       document.getElementById('feedback-contact').placeholder = t.placeholderContact;
       document.getElementById('t-consent').textContent = t.consent;
+      document.getElementById('open-privacy').textContent = t.privacyLink;
       document.getElementById('submit-btn').textContent = t.submit;
       document.getElementById('back-to-stars').textContent = t.back;
       document.getElementById('link-fallback').textContent = t.fallback;
       document.getElementById('t-success-title').textContent = t.successTitle;
       document.getElementById('t-success-subtitle').textContent = t.successSubtitle;
+
+      // Обновляем текст модалки политики
+      document.getElementById('t-modal-title').textContent = t.modalTitle;
+      document.getElementById('close-privacy-btn').textContent = t.modalBtn;
+      document.getElementById('t-modal-body').innerHTML = t.modalBody(currentVenue.name);
     }
+
+    // Инициализируем текст модалки при старте
+    setLanguage('ru');
+
+    // МОДАЛЬНОЕ ОКНО ПОЛИТИКИ КОНФИДЕНЦИАЛЬНОСТИ
+    const privacyModal = document.getElementById('privacy-modal');
+    document.getElementById('open-privacy').addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      privacyModal.classList.add('active');
+    });
+    document.getElementById('close-privacy-x').addEventListener('click', () => privacyModal.classList.remove('active'));
+    document.getElementById('close-privacy-btn').addEventListener('click', () => privacyModal.classList.remove('active'));
+    privacyModal.addEventListener('click', (e) => {
+      if (e.target === privacyModal) privacyModal.classList.remove('active');
+    });
 
     // ЛОГИКА 5 ЗВЕЗД
     function highlightStars(count) {
@@ -651,45 +698,41 @@
         highlightStars(val);
 
         if (val >= 4) {
-          // 4 или 5 звезд -> Переход в 2ГИС
+          // 4-5 звезд -> Сразу перекидывает в 2ГИС нужного заведения
           setTimeout(() => {
             window.location.href = currentVenue.gisUrl;
-          }, 220);
+          }, 180);
         } else {
-          // 1, 2 или 3 звезды -> Открываем форму жалобы
+          // 1-3 звезды -> Открывает форму жалобы
           document.getElementById('selected-rating-text').textContent = I18N[currentLang].ratingPill(val);
           setTimeout(() => {
             choiceScreen.style.display = 'none';
             complaintScreen.style.display = 'block';
-          }, 220);
+          }, 180);
         }
       });
     });
 
-    // Кнопка "Назад" к звездам
     document.getElementById('back-to-stars').addEventListener('click', () => {
       complaintScreen.style.display = 'none';
       choiceScreen.style.display = 'block';
     });
 
-    // Чекбокс согласия
     const consentCheck = document.getElementById('consent-check');
     const submitBtn = document.getElementById('submit-btn');
-    consentCheck.addEventListener('change', () => {
-      submitBtn.disabled = !consentCheck.checked;
-    });
+    consentCheck.addEventListener('change', () => { submitBtn.disabled = !consentCheck.checked; });
 
-    // Отправка жалобы на сервер
+    // ОТПРАВКА ОТЗЫВА НА СЕРВЕР БОТА (СТРОГО ОРИГИНАЛЬНЫЙ ФОРМАТ)
     document.getElementById('feedback-form').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const t = I18N[currentLang];
       submitBtn.disabled = true;
-      submitBtn.textContent = t.sending;
+      submitBtn.textContent = I18N[currentLang].sending;
 
       const text = document.getElementById('feedback-text').value.trim();
       const contact = document.getElementById('feedback-contact').value.trim();
 
       try {
+        // Отправляем структурированные данные на сервер бота (порт 8080) как было изначально
         const response = await fetch('https://bot-py-rvtap.onrender.com/api/send-lead', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -697,25 +740,23 @@
             place_id: venueSlug,
             place_name: currentVenue.name,
             chat_id: currentVenue.chatId,
-            rating: selectedRating,
-            comment: `[Оценка: ${selectedRating}/5] ${text}`,
+            comment: `${text} (Оценка: ${selectedRating}/5)`,
             contact: contact
           })
         });
-
         const data = await response.json();
         if (response.ok && (data.ok || data.status === "ok")) {
           complaintScreen.style.display = 'none';
           successScreen.style.display = 'block';
         } else {
-          alert(t.errSend + (data.error || data.description || 'Unknown error'));
+          alert('Ошибка отправки: ' + (data.error || data.description || 'Неизвестная ошибка'));
           submitBtn.disabled = false;
-          submitBtn.textContent = t.submit;
+          submitBtn.textContent = I18N[currentLang].submit;
         }
       } catch (err) {
-        alert(t.errNet);
+        alert('Ошибка сети: проверьте, запущен ли bot.py (порт 8080)');
         submitBtn.disabled = false;
-        submitBtn.textContent = t.submit;
+        submitBtn.textContent = I18N[currentLang].submit;
       }
     });
   </script>
