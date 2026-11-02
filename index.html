@@ -501,7 +501,7 @@
   </div>
 
   <script>
-    // РЕЕСТР ЗАВЕДЕНИЙ (исходные ссылки 2ГИС с /addreview и точные chatId управляющих)
+    // РЕЕСТР ЗАВЕДЕНИЙ
     const VENUES = {
       "legenda": {
         name: "Legenda",
@@ -525,7 +525,6 @@
       }
     };
 
-    // Определение заведения из URL (?v=voronka и т.д.)
     const searchStr = window.location.search || window.location.hash.replace(/^#\??/, '?');
     const urlParams = new URLSearchParams(searchStr);
     const rawSlug = (urlParams.get('v') || 'legenda').trim().toLowerCase();
@@ -536,7 +535,6 @@
     document.getElementById('venue-name').textContent = currentVenue.name;
     document.getElementById('link-fallback').href = currentVenue.gisUrl;
 
-    // СЛОВАРЬ ПЕРЕВОДОВ (RUS / KAZ / ENG)
     const I18N = {
       ru: {
         code: "RUS",
@@ -764,12 +762,12 @@
         highlightStars(val);
 
         if (val >= 4) {
-          // 4-5 звезд -> Сразу перенаправляем в 2ГИС
+          // 4-5 звезд -> Открываем 2ГИС в НОВОЙ ВКЛАДКЕ
           setTimeout(() => {
-            window.location.href = currentVenue.gisUrl;
+            window.open(currentVenue.gisUrl, '_blank', 'noopener,noreferrer');
           }, 200);
         } else {
-          // 1-3 звезды -> Открываем форму жалобы
+          // 1-3 звезды -> Открываем форму жалобы на этой же странице
           document.getElementById('selected-rating-text').textContent = I18N[currentLang].ratingPill(val);
           setTimeout(() => {
             choiceScreen.style.display = 'none';
