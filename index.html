@@ -7,15 +7,14 @@
   <style>
     :root {
       --primary: #10b981;
-      --danger: #ef4444;
-      --star-active: #fbbf24;
-      --star-inactive: #cbd5e1;
-      --bg: #e2e8f0;
+      --star-active: #f59e0b;
+      --star-inactive: #e2e8f0;
+      --bg: #f8fafc;
       --card-bg: #ffffff;
       --text-main: #0f172a;
       --text-muted: #64748b;
-      --border: #cbd5e1;
-      --dark: #0f172a;
+      --border: #e2e8f0;
+      --accent: #0f172a;
     }
 
     * {
@@ -23,18 +22,17 @@
       margin: 0;
       padding: 0;
       -webkit-tap-highlight-color: transparent;
-      border-radius: 0 !important; /* Строгий квадратный стиль */
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background-color: var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
       color: var(--text-main);
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      padding: 64px 16px 24px;
+      padding: 24px 16px;
       position: relative;
     }
 
@@ -52,27 +50,27 @@
       align-items: center;
       gap: 6px;
       background: #ffffff;
-      border: 2px solid var(--dark);
+      border: 1px solid var(--border);
       padding: 8px 14px;
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: 0.5px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 700;
       color: var(--text-main);
       cursor: pointer;
-      box-shadow: 4px 4px 0px var(--dark);
-      transition: transform 0.1s, box-shadow 0.1s;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+      transition: all 0.2s ease;
     }
 
-    .lang-btn:active {
-      transform: translate(2px, 2px);
-      box-shadow: 2px 2px 0px var(--dark);
+    .lang-btn:hover {
+      background: #f8fafc;
+      border-color: #cbd5e1;
     }
 
     .lang-arrow {
       width: 14px;
       height: 14px;
-      color: var(--text-main);
-      transition: transform 0.2s ease;
+      color: var(--text-muted);
+      transition: transform 0.25s ease;
     }
 
     .top-bar-lang.open .lang-arrow {
@@ -84,41 +82,50 @@
       top: calc(100% + 6px);
       right: 0;
       background: #ffffff;
-      border: 2px solid var(--dark);
-      box-shadow: 4px 4px 0px var(--dark);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
       display: none;
       flex-direction: column;
-      min-width: 100%;
+      min-width: 84px;
     }
 
     .top-bar-lang.open .lang-menu {
       display: flex;
+      animation: fadeIn 0.15s ease;
     }
 
     .lang-option {
       padding: 10px 14px;
-      font-size: 12px;
-      font-weight: 800;
+      font-size: 13px;
+      font-weight: 700;
       color: var(--text-muted);
-      background: #ffffff;
+      background: transparent;
       border: none;
-      border-bottom: 1px solid var(--border);
       text-align: left;
       cursor: pointer;
+      transition: background 0.15s, color 0.15s;
     }
 
-    .lang-option:last-child { border-bottom: none; }
-    .lang-option:hover { background: #f1f5f9; color: var(--text-main); }
-    .lang-option.active { background: var(--dark); color: #ffffff; }
+    .lang-option:hover {
+      background: #f8fafc;
+      color: var(--text-main);
+    }
 
-    /* Квадратная карточка по центру */
+    .lang-option.active {
+      color: var(--primary);
+      background: #ecfdf5;
+    }
+
+    /* Минималистичная карточка по центру */
     .card {
       background: var(--card-bg);
       width: 100%;
-      max-width: 420px;
-      padding: 36px 28px;
-      border: 2px solid var(--dark);
-      box-shadow: 8px 8px 0px var(--dark);
+      max-width: 400px;
+      padding: 32px 24px;
+      border-radius: 24px;
+      box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.07), 0 0 1px 1px rgba(15, 23, 42, 0.03);
       text-align: center;
       position: relative;
     }
@@ -126,129 +133,138 @@
     .venue-badge {
       display: inline-block;
       font-size: 12px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: #ffffff;
-      background: var(--dark);
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      background: #f1f5f9;
       padding: 6px 14px;
+      border-radius: 999px;
       margin-bottom: 20px;
     }
 
     h2 {
       font-size: 22px;
-      font-weight: 800;
+      font-weight: 700;
       margin-bottom: 8px;
-      text-transform: uppercase;
       letter-spacing: -0.3px;
     }
 
     p.subtitle {
-      font-size: 14px;
+      font-size: 14.5px;
       color: var(--text-muted);
       margin-bottom: 28px;
-      line-height: 1.45;
+      line-height: 1.5;
     }
 
-    /* 5 звезд в виде квадратных кнопок */
+    /* 5 звезд */
     .stars-wrapper {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 8px;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
       margin-bottom: 16px;
     }
 
     .star-btn {
-      background: #f8fafc;
-      border: 2px solid var(--border);
+      background: none;
+      border: none;
       cursor: pointer;
-      aspect-ratio: 1 / 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      padding: 4px;
       color: var(--star-inactive);
-      transition: all 0.15s ease;
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
     .star-btn svg {
-      width: 32px;
-      height: 32px;
+      width: 42px;
+      height: 42px;
       fill: currentColor;
+      transition: color 0.2s ease, filter 0.2s ease;
     }
 
     .star-btn.active {
-      border-color: var(--dark);
-      background: #fef3c7;
       color: var(--star-active);
-      transform: translateY(-2px);
-      box-shadow: 3px 3px 0px var(--dark);
+      transform: scale(1.12);
+    }
+
+    .star-btn.active svg {
+      filter: drop-shadow(0 4px 10px rgba(245, 158, 11, 0.35));
     }
 
     .rating-hint {
       min-height: 20px;
-      font-size: 13px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      font-size: 13.5px;
+      font-weight: 600;
       color: var(--text-muted);
     }
 
     /* Экран жалобы (1-3 звезды) */
-    #complaint-screen { display: none; text-align: left; }
+    #complaint-screen {
+      display: none;
+      text-align: left;
+      animation: fadeIn 0.2s ease;
+    }
 
     .selected-rating-pill {
-      display: inline-block;
-      font-size: 12px;
-      font-weight: 800;
-      text-transform: uppercase;
-      color: var(--dark);
-      background: #fde68a;
-      border: 1.5px solid var(--dark);
-      padding: 4px 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #b45309;
+      background: #fef3c7;
+      padding: 5px 12px;
+      border-radius: 999px;
       margin-bottom: 14px;
     }
 
-    .form-group { margin-bottom: 16px; }
+    .form-group {
+      margin-bottom: 16px;
+    }
 
     label {
       display: block;
       font-size: 13px;
-      font-weight: 800;
-      text-transform: uppercase;
+      font-weight: 600;
       margin-bottom: 6px;
-      color: var(--text-main);
+      color: #334155;
     }
 
     textarea, input[type="text"] {
       width: 100%;
       padding: 12px 14px;
-      border: 2px solid var(--border);
-      font-size: 15px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      font-size: 14.5px;
       background: #f8fafc;
       outline: none;
       font-family: inherit;
       color: var(--text-main);
+      transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
     }
 
     textarea:focus, input[type="text"]:focus {
-      border-color: var(--dark);
+      border-color: #3b82f6;
       background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
     }
 
-    textarea { resize: none; height: 100px; }
+    textarea {
+      resize: none;
+      height: 100px;
+    }
 
     .checkbox-container {
       display: flex;
       align-items: flex-start;
       gap: 10px;
       margin: 16px 0 20px;
+      user-select: none;
     }
 
     .checkbox-container input {
       margin-top: 2px;
-      width: 18px;
-      height: 18px;
-      accent-color: var(--dark);
+      width: 17px;
+      height: 17px;
+      accent-color: var(--accent);
       cursor: pointer;
       flex-shrink: 0;
     }
@@ -256,31 +272,35 @@
     .checkbox-text {
       font-size: 13px;
       color: var(--text-muted);
-      line-height: 1.4;
+      line-height: 1.45;
     }
 
     .privacy-trigger {
-      color: var(--dark);
+      color: #0284c7;
       text-decoration: underline;
       cursor: pointer;
-      font-weight: 700;
+      font-weight: 600;
     }
 
     .btn-submit {
       width: 100%;
-      padding: 15px;
-      background: var(--dark);
+      padding: 14px;
+      background: var(--accent);
       color: #ffffff;
-      border: 2px solid var(--dark);
+      border: none;
+      border-radius: 14px;
       font-size: 15px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      font-weight: 600;
       cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+
+    .btn-submit:active:not(:disabled) {
+      transform: scale(0.99);
     }
 
     .btn-submit:disabled {
-      opacity: 0.35;
+      opacity: 0.4;
       cursor: not-allowed;
     }
 
@@ -288,47 +308,59 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-top: 20px;
+      margin-top: 18px;
       padding-top: 14px;
-      border-top: 2px solid #f1f5f9;
+      border-top: 1px solid #f1f5f9;
     }
 
     .back-btn {
       background: none;
       border: none;
-      font-size: 13px;
-      font-weight: 800;
-      text-transform: uppercase;
+      font-size: 13.5px;
+      font-weight: 600;
       color: var(--text-muted);
       cursor: pointer;
     }
 
-    .fallback-link {
-      font-size: 13px;
-      color: var(--dark);
-      text-decoration: underline;
-      font-weight: 700;
+    .back-btn:hover {
+      color: var(--text-main);
     }
 
-    #success-screen { display: none; }
+    .fallback-link {
+      font-size: 13.5px;
+      color: #0284c7;
+      text-decoration: underline;
+      font-weight: 500;
+    }
 
-    .choice-icon {
+    #success-screen {
+      display: none;
+      animation: fadeIn 0.2s ease;
+    }
+
+    .success-icon {
       width: 52px;
       height: 52px;
-      border: 2px solid var(--dark);
+      border-radius: 50%;
+      background: #d1fae5;
+      color: var(--primary);
       display: flex;
       align-items: center;
       justify-content: center;
       margin: 0 auto 16px;
-      background: #d1fae5;
-      color: var(--dark);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     /* Модальное окно Политики конфиденциальности */
     .modal-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(15, 23, 42, 0.65);
+      background: rgba(15, 23, 42, 0.5);
+      backdrop-filter: blur(4px);
       display: none;
       justify-content: center;
       align-items: center;
@@ -336,16 +368,19 @@
       z-index: 100;
     }
 
-    .modal-overlay.active { display: flex; }
+    .modal-overlay.active {
+      display: flex;
+      animation: fadeIn 0.2s ease;
+    }
 
     .modal-box {
       background: #ffffff;
       width: 100%;
-      max-width: 420px;
-      border: 2px solid var(--dark);
-      box-shadow: 8px 8px 0px var(--dark);
+      max-width: 400px;
+      border-radius: 20px;
       padding: 24px 20px 20px;
       text-align: left;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
       max-height: 85vh;
       display: flex;
       flex-direction: column;
@@ -355,25 +390,26 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
       padding-bottom: 10px;
-      border-bottom: 2px solid var(--dark);
+      border-bottom: 1px solid var(--border);
     }
 
     .modal-header h3 {
       font-size: 16px;
-      font-weight: 800;
-      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--text-main);
     }
 
     .modal-close-x {
-      background: var(--dark);
+      background: #f1f5f9;
       border: none;
       width: 28px;
       height: 28px;
-      font-size: 14px;
-      font-weight: 800;
-      color: #ffffff;
+      border-radius: 50%;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-muted);
       cursor: pointer;
     }
 
@@ -393,13 +429,13 @@
     .modal-btn-close {
       margin-top: 16px;
       width: 100%;
-      padding: 13px;
-      background: var(--dark);
+      padding: 12px;
+      background: var(--accent);
       color: #ffffff;
       border: none;
+      border-radius: 12px;
       font-size: 14px;
-      font-weight: 800;
-      text-transform: uppercase;
+      font-weight: 600;
       cursor: pointer;
     }
   </style>
@@ -410,7 +446,7 @@
   <div class="top-bar-lang" id="lang-dropdown">
     <button type="button" class="lang-btn" id="lang-btn">
       <span id="current-lang-label">RUS</span>
-      <svg class="lang-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+      <svg class="lang-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         <polyline points="6 9 12 15 18 9"></polyline>
       </svg>
     </button>
@@ -464,7 +500,7 @@
         <div class="checkbox-container">
           <input type="checkbox" id="consent-check" required>
           <div class="checkbox-text">
-            <label for="consent-check" id="t-consent" style="display:inline; font-weight:400; text-transform:none; color:inherit; cursor:pointer;">Даю согласие на обработку персональных данных и принимаю </label>
+            <label for="consent-check" id="t-consent" style="display:inline; font-weight:400; color:inherit; cursor:pointer;">Даю согласие на обработку персональных данных и принимаю </label>
             <span class="privacy-trigger" id="open-privacy">Политику конфиденциальности</span>
           </div>
         </div>
@@ -480,8 +516,8 @@
 
     <!-- 3. Экран благодарности -->
     <div id="success-screen">
-      <div class="choice-icon">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      <div class="success-icon">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
       </div>
       <h2 id="t-success-title">Спасибо за отзыв!</h2>
       <p class="subtitle" id="t-success-subtitle" style="margin-bottom: 0;">Ваше сообщение передано руководству. Мы свяжемся с вами.</p>
@@ -762,12 +798,12 @@
         highlightStars(val);
 
         if (val >= 4) {
-          // 4-5 звезд -> Открываем 2ГИС в НОВОЙ ВКЛАДКЕ
+          // 4-5 звезд -> Открываем 2ГИС в новой вкладке
           setTimeout(() => {
             window.open(currentVenue.gisUrl, '_blank', 'noopener,noreferrer');
           }, 200);
         } else {
-          // 1-3 звезды -> Открываем форму жалобы на этой же странице
+          // 1-3 звезды -> Открываем форму жалобы
           document.getElementById('selected-rating-text').textContent = I18N[currentLang].ratingPill(val);
           setTimeout(() => {
             choiceScreen.style.display = 'none';
