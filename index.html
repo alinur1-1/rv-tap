@@ -9,88 +9,73 @@
       --primary: #10b981;
       --danger: #ef4444;
       --star-active: #fbbf24;
-      --star-inactive: #e2e8f0;
-      --bg: #f8fafc;
+      --star-inactive: #cbd5e1;
+      --bg: #e2e8f0;
       --card-bg: #ffffff;
       --text-main: #0f172a;
       --text-muted: #64748b;
-      --border: #e2e8f0;
+      --border: #cbd5e1;
+      --dark: #0f172a;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      border-radius: 0 !important; /* Строгий квадратный стиль */
+    }
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: radial-gradient(circle at top, #f8fafc 0%, #e2e8f0 100%);
+      background-color: var(--bg);
       color: var(--text-main);
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      padding: 16px;
-    }
-
-    .card {
-      background: var(--card-bg);
-      width: 100%;
-      max-width: 420px;
-      padding: 28px 24px 32px;
-      border-radius: 24px;
-      box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.08), 0 0 1px 1px rgba(15, 23, 42, 0.03);
-      text-align: center;
+      padding: 64px 16px 24px;
       position: relative;
     }
 
-    /* Верхняя панель: Бейдж заведения + Язык */
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 22px;
-    }
-
-    .venue-badge {
-      display: inline-block;
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--text-main);
-      background: #f1f5f9;
-      padding: 6px 14px;
-      border-radius: 20px;
-    }
-
-    /* Переключатель языков */
-    .lang-dropdown {
-      position: relative;
+    /* Языковое меню в правом верхнем углу */
+    .top-bar-lang {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      z-index: 50;
       user-select: none;
-      z-index: 20;
     }
 
     .lang-btn {
       display: flex;
       align-items: center;
-      gap: 5px;
-      background: #f8fafc;
-      border: 1px solid var(--border);
-      padding: 6px 11px;
-      border-radius: 10px;
+      gap: 6px;
+      background: #ffffff;
+      border: 2px solid var(--dark);
+      padding: 8px 14px;
       font-size: 12px;
-      font-weight: 700;
+      font-weight: 800;
+      letter-spacing: 0.5px;
       color: var(--text-main);
       cursor: pointer;
-      transition: all 0.2s;
+      box-shadow: 4px 4px 0px var(--dark);
+      transition: transform 0.1s, box-shadow 0.1s;
     }
 
-    .lang-btn:hover { background: #f1f5f9; }
+    .lang-btn:active {
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0px var(--dark);
+    }
 
     .lang-arrow {
       width: 14px;
       height: 14px;
-      color: var(--text-muted);
-      transition: transform 0.25s ease;
+      color: var(--text-main);
+      transition: transform 0.2s ease;
     }
 
-    .lang-dropdown.open .lang-arrow {
+    .top-bar-lang.open .lang-arrow {
       transform: rotate(180deg);
     }
 
@@ -99,157 +84,251 @@
       top: calc(100% + 6px);
       right: 0;
       background: #ffffff;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-      overflow: hidden;
+      border: 2px solid var(--dark);
+      box-shadow: 4px 4px 0px var(--dark);
       display: none;
       flex-direction: column;
-      min-width: 78px;
+      min-width: 100%;
     }
 
-    .lang-dropdown.open .lang-menu {
+    .top-bar-lang.open .lang-menu {
       display: flex;
     }
 
     .lang-option {
-      padding: 9px 12px;
+      padding: 10px 14px;
       font-size: 12px;
-      font-weight: 700;
+      font-weight: 800;
       color: var(--text-muted);
-      background: transparent;
+      background: #ffffff;
       border: none;
+      border-bottom: 1px solid var(--border);
       text-align: left;
       cursor: pointer;
     }
 
-    .lang-option:hover { background: #f8fafc; color: var(--text-main); }
-    .lang-option.active { color: var(--primary); background: #ecfdf5; }
+    .lang-option:last-child { border-bottom: none; }
+    .lang-option:hover { background: #f1f5f9; color: var(--text-main); }
+    .lang-option.active { background: var(--dark); color: #ffffff; }
 
-    h2 { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
-    p.subtitle { font-size: 15px; color: var(--text-muted); margin-bottom: 26px; line-height: 1.4; }
+    /* Квадратная карточка по центру */
+    .card {
+      background: var(--card-bg);
+      width: 100%;
+      max-width: 420px;
+      padding: 36px 28px;
+      border: 2px solid var(--dark);
+      box-shadow: 8px 8px 0px var(--dark);
+      text-align: center;
+      position: relative;
+    }
 
-    /* Звезды (1-5) */
+    .venue-badge {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #ffffff;
+      background: var(--dark);
+      padding: 6px 14px;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: -0.3px;
+    }
+
+    p.subtitle {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 28px;
+      line-height: 1.45;
+    }
+
+    /* 5 звезд в виде квадратных кнопок */
     .stars-wrapper {
-      display: flex;
-      justify-content: center;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
       gap: 8px;
-      margin-bottom: 14px;
+      margin-bottom: 16px;
     }
 
     .star-btn {
-      background: none;
-      border: none;
+      background: #f8fafc;
+      border: 2px solid var(--border);
       cursor: pointer;
-      padding: 4px;
+      aspect-ratio: 1 / 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       color: var(--star-inactive);
-      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transition: all 0.15s ease;
     }
 
     .star-btn svg {
-      width: 44px;
-      height: 44px;
+      width: 32px;
+      height: 32px;
       fill: currentColor;
-      transition: color 0.2s ease, filter 0.2s ease;
     }
 
     .star-btn.active {
+      border-color: var(--dark);
+      background: #fef3c7;
       color: var(--star-active);
-      transform: scale(1.1);
-    }
-
-    .star-btn.active svg {
-      filter: drop-shadow(0 4px 10px rgba(251, 191, 36, 0.35));
+      transform: translateY(-2px);
+      box-shadow: 3px 3px 0px var(--dark);
     }
 
     .rating-hint {
       min-height: 20px;
-      font-size: 14px;
-      font-weight: 600;
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
       color: var(--text-muted);
     }
 
-    /* Экран фиксации проблемы */
+    /* Экран жалобы (1-3 звезды) */
     #complaint-screen { display: none; text-align: left; }
 
     .selected-rating-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 13px;
-      font-weight: 600;
-      color: #b45309;
-      background: #fef3c7;
-      padding: 5px 12px;
-      border-radius: 999px;
-      margin-bottom: 12px;
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: var(--dark);
+      background: #fde68a;
+      border: 1.5px solid var(--dark);
+      padding: 4px 10px;
+      margin-bottom: 14px;
     }
 
     .form-group { margin-bottom: 16px; }
-    label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 6px; color: #334155; }
-    textarea, input[type="text"] {
-      width: 100%; padding: 12px 14px; border-radius: 12px;
-      border: 1px solid var(--border); font-size: 15px; background: #f8fafc; outline: none;
-      font-family: inherit;
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      color: var(--text-main);
     }
-    textarea:focus, input[type="text"]:focus { border-color: #0f172a; background: #fff; }
+
+    textarea, input[type="text"] {
+      width: 100%;
+      padding: 12px 14px;
+      border: 2px solid var(--border);
+      font-size: 15px;
+      background: #f8fafc;
+      outline: none;
+      font-family: inherit;
+      color: var(--text-main);
+    }
+
+    textarea:focus, input[type="text"]:focus {
+      border-color: var(--dark);
+      background: #ffffff;
+    }
+
     textarea { resize: none; height: 100px; }
 
     .checkbox-container {
-      display: flex; align-items: flex-start; gap: 10px; margin: 16px 0 20px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin: 16px 0 20px;
     }
+
     .checkbox-container input {
-      margin-top: 3px; width: 17px; height: 17px; accent-color: #0f172a; cursor: pointer; flex-shrink: 0;
+      margin-top: 2px;
+      width: 18px;
+      height: 18px;
+      accent-color: var(--dark);
+      cursor: pointer;
+      flex-shrink: 0;
     }
+
     .checkbox-text {
-      font-size: 13px; color: var(--text-muted); line-height: 1.4;
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.4;
     }
+
     .privacy-trigger {
-      color: #0284c7;
+      color: var(--dark);
       text-decoration: underline;
       cursor: pointer;
-      font-weight: 600;
+      font-weight: 700;
     }
 
     .btn-submit {
-      width: 100%; padding: 14px; background: #0f172a; color: #fff;
-      border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer;
+      width: 100%;
+      padding: 15px;
+      background: var(--dark);
+      color: #ffffff;
+      border: 2px solid var(--dark);
+      font-size: 15px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      cursor: pointer;
     }
-    .btn-submit:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .btn-submit:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
 
     .bottom-links {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-top: 18px;
+      margin-top: 20px;
       padding-top: 14px;
-      border-top: 1px solid #f1f5f9;
+      border-top: 2px solid #f1f5f9;
     }
 
     .back-btn {
-      background: none; border: none; font-size: 14px; font-weight: 600;
-      color: var(--text-muted); cursor: pointer;
+      background: none;
+      border: none;
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      cursor: pointer;
     }
 
     .fallback-link {
-      font-size: 14px; color: #0284c7; text-decoration: underline; font-weight: 500;
+      font-size: 13px;
+      color: var(--dark);
+      text-decoration: underline;
+      font-weight: 700;
     }
 
     #success-screen { display: none; }
 
     .choice-icon {
-      width: 52px; height: 52px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
+      width: 52px;
+      height: 52px;
+      border: 2px solid var(--dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
       margin: 0 auto 16px;
-      background: #d1fae5; color: #10b981;
+      background: #d1fae5;
+      color: var(--dark);
     }
 
-    /* Модальное окно Политики Конфиденциальности */
+    /* Модальное окно Политики конфиденциальности */
     .modal-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(15, 23, 42, 0.55);
-      backdrop-filter: blur(3px);
+      background: rgba(15, 23, 42, 0.65);
       display: none;
       justify-content: center;
       align-items: center;
@@ -257,18 +336,16 @@
       z-index: 100;
     }
 
-    .modal-overlay.active {
-      display: flex;
-    }
+    .modal-overlay.active { display: flex; }
 
     .modal-box {
       background: #ffffff;
       width: 100%;
-      max-width: 400px;
-      border-radius: 20px;
+      max-width: 420px;
+      border: 2px solid var(--dark);
+      box-shadow: 8px 8px 0px var(--dark);
       padding: 24px 20px 20px;
       text-align: left;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
       max-height: 85vh;
       display: flex;
       flex-direction: column;
@@ -280,24 +357,23 @@
       align-items: center;
       margin-bottom: 14px;
       padding-bottom: 10px;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 2px solid var(--dark);
     }
 
     .modal-header h3 {
-      font-size: 17px;
-      font-weight: 700;
-      color: var(--text-main);
+      font-size: 16px;
+      font-weight: 800;
+      text-transform: uppercase;
     }
 
     .modal-close-x {
-      background: #f1f5f9;
+      background: var(--dark);
       border: none;
       width: 28px;
       height: 28px;
-      border-radius: 50%;
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--text-muted);
+      font-size: 14px;
+      font-weight: 800;
+      color: #ffffff;
       cursor: pointer;
     }
 
@@ -317,40 +393,38 @@
     .modal-btn-close {
       margin-top: 16px;
       width: 100%;
-      padding: 12px;
-      background: #0f172a;
+      padding: 13px;
+      background: var(--dark);
       color: #ffffff;
       border: none;
-      border-radius: 12px;
       font-size: 14px;
-      font-weight: 600;
+      font-weight: 800;
+      text-transform: uppercase;
       cursor: pointer;
     }
   </style>
 </head>
 <body>
 
-  <div class="card">
-    <div class="card-header">
-      <div id="venue-name" class="venue-badge">ReviewsTap</div>
-
-      <!-- Выбор языка (RUS / KAZ / ENG) -->
-      <div class="lang-dropdown" id="lang-dropdown">
-        <button type="button" class="lang-btn" id="lang-btn">
-          <span id="current-lang-label">RUS</span>
-          <svg class="lang-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="6 9 12 15 18 9"></polyline>
-          </svg>
-        </button>
-        <div class="lang-menu" id="lang-menu">
-          <button type="button" class="lang-option active" data-lang="ru">RUS</button>
-          <button type="button" class="lang-option" data-lang="kk">KAZ</button>
-          <button type="button" class="lang-option" data-lang="en">ENG</button>
-        </div>
-      </div>
+  <!-- Языковое меню в правом верхнем углу -->
+  <div class="top-bar-lang" id="lang-dropdown">
+    <button type="button" class="lang-btn" id="lang-btn">
+      <span id="current-lang-label">RUS</span>
+      <svg class="lang-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+        <polyline points="6 9 12 15 18 9"></polyline>
+      </svg>
+    </button>
+    <div class="lang-menu" id="lang-menu">
+      <button type="button" class="lang-option active" data-lang="ru">RUS</button>
+      <button type="button" class="lang-option" data-lang="kk">KAZ</button>
+      <button type="button" class="lang-option" data-lang="en">ENG</button>
     </div>
+  </div>
 
-    <!-- 1. Экран оценки (5 звезд) -->
+  <div class="card">
+    <div id="venue-name" class="venue-badge">ReviewsTap</div>
+
+    <!-- 1. Экран звезд -->
     <div id="choice-screen">
       <h2 id="t-title">Вам всё понравилось?</h2>
       <p class="subtitle" id="t-subtitle">Пожалуйста, оцените наш сервис</p>
@@ -366,7 +440,7 @@
       <div class="rating-hint" id="rating-hint">Нажмите на звезду</div>
     </div>
 
-    <!-- 2. Экран фиксации проблемы -->
+    <!-- 2. Экран фиксации проблемы (1-3 звезды) -->
     <div id="complaint-screen">
       <div class="selected-rating-pill">
         <span>★</span>
@@ -390,7 +464,7 @@
         <div class="checkbox-container">
           <input type="checkbox" id="consent-check" required>
           <div class="checkbox-text">
-            <label for="consent-check" id="t-consent" style="display:inline; font-weight:400; color:inherit; cursor:pointer;">Даю согласие на обработку персональных данных и принимаю </label>
+            <label for="consent-check" id="t-consent" style="display:inline; font-weight:400; text-transform:none; color:inherit; cursor:pointer;">Даю согласие на обработку персональных данных и принимаю </label>
             <span class="privacy-trigger" id="open-privacy">Политику конфиденциальности</span>
           </div>
         </div>
@@ -427,7 +501,7 @@
   </div>
 
   <script>
-    // РЕЕСТР ЗАВЕДЕНИЙ (ключи строго в нижнем регистре без пробелов, 100% совпадение с БД бота)
+    // РЕЕСТР ЗАВЕДЕНИЙ (исходные ссылки 2ГИС с /addreview и точные chatId управляющих)
     const VENUES = {
       "legenda": {
         name: "Legenda",
@@ -451,12 +525,11 @@
       }
     };
 
-    // Определение заведения из URL (?v=voronka, ?v=legenda и т.д.)
+    // Определение заведения из URL (?v=voronka и т.д.)
     const searchStr = window.location.search || window.location.hash.replace(/^#\??/, '?');
     const urlParams = new URLSearchParams(searchStr);
     const rawSlug = (urlParams.get('v') || 'legenda').trim().toLowerCase();
-
-    // Если передали неизвестный ключ или открыли без ?v=, берем 'legenda'
+    
     const venueSlug = VENUES[rawSlug] ? rawSlug : 'legenda';
     const currentVenue = VENUES[venueSlug];
 
@@ -489,23 +562,21 @@
         modalTitle: "Политика конфиденциальности",
         modalBtn: "Понятно",
         modalBody: (vName) => `
-          <p>Мы уважаем вашу конфиденциальность. Оставляя свои контактные данные в сервисе <strong>ReviewsTap</strong> для заведения <strong>${vName}</strong>, вы даёте согласие на их обработку на следующих условиях:</p>
+          <p>Оставляя контактные данные в сервисе <strong>ReviewsTap</strong> для заведения <strong>${vName}</strong>, вы даёте согласие на их обработку:</p>
           <p><strong>1. Какие данные мы собираем:</strong></p>
           <ul>
             <li>Указанный вами номер телефона или никнейм в Instagram;</li>
             <li>Текст вашего отзыва и выбранную оценку обслуживания.</li>
           </ul>
-          <p><strong>2. Где и как используется ваш номер / контакт:</strong></p>
+          <p><strong>2. Где и как используется ваш номер:</strong></p>
           <ul>
-            <li>Контакт передаётся по защищённому каналу напрямую управляющему или владельцу заведения <strong>${vName}</strong>;</li>
-            <li>Ваш номер используется <strong>исключительно для обратной связи</strong> с вами: чтобы уточнить детали инцидента, принести извинения, решить проблему или предложить бонус/компенсацию.</li>
+            <li>Контакт передаётся напрямую управляющему или владельцу заведения <strong>${vName}</strong>;</li>
+            <li>Ваш номер используется <strong>только для обратной связи</strong> с вами: чтобы уточнить детали, решить проблему или предложить бонус/компенсацию.</li>
           </ul>
-          <p><strong>3. Гарантия безопасности (Без спама):</strong></p>
+          <p><strong>3. Гарантия безопасности:</strong></p>
           <ul>
-            <li>Ваш номер <strong>не публикуется</strong> в открытом доступе;</li>
-            <li>Мы <strong>не используем</strong> ваши контакты для рекламных рассылок, спама и не передаём их третьим лицам.</li>
+            <li>Ваш номер <strong>не публикуется</strong> в открытом доступе и <strong>не используется</strong> для рекламных рассылок или спама.</li>
           </ul>
-          <p>Обработка осуществляется в соответствии с Законом Республики Казахстан «О персональных данных и их защите».</p>
         `
       },
       kk: {
@@ -532,7 +603,7 @@
         modalTitle: "Құпиялылық саясаты",
         modalBtn: "Түсінікті",
         modalBody: (vName) => `
-          <p>Біз сіздің құпиялылығыңызды құрметтейміз. <strong>${vName}</strong> мекемесіне арналған <strong>ReviewsTap</strong> сервисінде байланыс деректеріңізді қалдыра отырып, оларды келесі шарттарда өңдеуге келісім бересіз:</p>
+          <p><strong>${vName}</strong> мекемесіне арналған <strong>ReviewsTap</strong> сервисінде байланыс деректеріңізді қалдыра отырып, оларды өңдеуге келісім бересіз:</p>
           <p><strong>1. Қандай деректер жиналады:</strong></p>
           <ul>
             <li>Сіз көрсеткен телефон нөмірі немесе Instagram парақшаңыз;</li>
@@ -540,15 +611,13 @@
           </ul>
           <p><strong>2. Нөміріңіз қайда және қалай қолданылады:</strong></p>
           <ul>
-            <li>Байланыс нөмірі тікелей <strong>${vName}</strong> мекемесінің басшылығына немесе иесіне ғана жіберіледі;</li>
-            <li>Нөміріңіз <strong>тек сізбен кері байланыс орнату үшін</strong> қолданылады: жағдайды нақтылау, мәселені шешу немесе бонус/өтемақы ұсыну үшін.</li>
+            <li>Байланыс нөмірі тікелей <strong>${vName}</strong> мекемесінің басшылығына ғана жіберіледі;</li>
+            <li>Нөміріңіз <strong>тек сізбен кері байланыс орнату үшін</strong> (мәселені шешу немесе бонус ұсыну үшін) қолданылады.</li>
           </ul>
-          <p><strong>3. Қауіпсіздік кепілдігі (Спамсыз):</strong></p>
+          <p><strong>3. Қауіпсіздік кепілдігі:</strong></p>
           <ul>
-            <li>Нөміріңіз ашық түрде еш жерде <strong>жарияланбайды</strong>;</li>
-            <li>Біз сіздің нөміріңізді жарнамалық хабарламалар мен спам үшін <strong>пайдаланбаймыз</strong> және үшінші тұлғаларға бермейміз.</li>
+            <li>Нөміріңіз еш жерде жарияланбайды және спам/жарнама үшін пайдаланылмайды.</li>
           </ul>
-          <p>Деректерді өңдеу Қазақстан Республикасының «Дербес деректер және оларды қорғау туралы» Заңына сәйкес жүзеге асырылады.</p>
         `
       },
       en: {
@@ -575,21 +644,20 @@
         modalTitle: "Privacy Policy",
         modalBtn: "Got it",
         modalBody: (vName) => `
-          <p>We respect your privacy. By providing your contact details via <strong>ReviewsTap</strong> for <strong>${vName}</strong>, you agree to their processing under the following terms:</p>
-          <p><strong>1. What data we collect:</strong></p>
+          <p>By providing your contact details via <strong>ReviewsTap</strong> for <strong>${vName}</strong>, you agree to the following:</p>
+          <p><strong>1. Data we collect:</strong></p>
           <ul>
             <li>Your phone number or Instagram username;</li>
-            <li>Your feedback message and service rating.</li>
+            <li>Your feedback message and rating.</li>
           </ul>
-          <p><strong>2. Where and how your contact is used:</strong></p>
+          <p><strong>2. How your contact is used:</strong></p>
           <ul>
-            <li>Your contact is sent securely and directly to the management of <strong>${vName}</strong>;</li>
-            <li>It is used <strong>strictly to contact you back</strong> regarding your visit: to clarify details, resolve the issue, or offer compensation.</li>
+            <li>Your contact is sent directly to the management of <strong>${vName}</strong>;</li>
+            <li>It is used <strong>strictly to contact you back</strong> to resolve your issue or offer compensation.</li>
           </ul>
           <p><strong>3. No Spam Guarantee:</strong></p>
           <ul>
-            <li>Your phone number is <strong>never published</strong> publicly;</li>
-            <li>We <strong>do not use</strong> your contact for marketing/spam and never share it with third parties.</li>
+            <li>Your number is never published publicly and never used for marketing or spam.</li>
           </ul>
         `
       }
@@ -604,7 +672,7 @@
     const ratingHint = document.getElementById('rating-hint');
     const starBtns = document.querySelectorAll('.star-btn');
 
-    // ВЫПАДАЮЩИЙ СПИСОК ЯЗЫКОВ
+    // Языковой селектор
     const langDropdown = document.getElementById('lang-dropdown');
     const langBtn = document.getElementById('lang-btn');
     const langOptions = document.querySelectorAll('.lang-option');
@@ -655,16 +723,14 @@
       document.getElementById('t-success-title').textContent = t.successTitle;
       document.getElementById('t-success-subtitle').textContent = t.successSubtitle;
 
-      // Обновляем текст модалки политики
       document.getElementById('t-modal-title').textContent = t.modalTitle;
       document.getElementById('close-privacy-btn').textContent = t.modalBtn;
       document.getElementById('t-modal-body').innerHTML = t.modalBody(currentVenue.name);
     }
 
-    // Инициализируем текст модалки при старте
     setLanguage('ru');
 
-    // МОДАЛЬНОЕ ОКНО ПОЛИТИКИ КОНФИДЕНЦИАЛЬНОСТИ
+    // Модальное окно политики
     const privacyModal = document.getElementById('privacy-modal');
     document.getElementById('open-privacy').addEventListener('click', (e) => {
       e.preventDefault();
@@ -677,7 +743,7 @@
       if (e.target === privacyModal) privacyModal.classList.remove('active');
     });
 
-    // ЛОГИКА 5 ЗВЕЗД
+    // Логика звезд
     function highlightStars(count) {
       starBtns.forEach(btn => {
         const val = parseInt(btn.dataset.value, 10);
@@ -698,17 +764,17 @@
         highlightStars(val);
 
         if (val >= 4) {
-          // 4-5 звезд -> Сразу перекидывает в 2ГИС нужного заведения
+          // 4-5 звезд -> Сразу перенаправляем в 2ГИС
           setTimeout(() => {
             window.location.href = currentVenue.gisUrl;
-          }, 180);
+          }, 200);
         } else {
-          // 1-3 звезды -> Открывает форму жалобы
+          // 1-3 звезды -> Открываем форму жалобы
           document.getElementById('selected-rating-text').textContent = I18N[currentLang].ratingPill(val);
           setTimeout(() => {
             choiceScreen.style.display = 'none';
             complaintScreen.style.display = 'block';
-          }, 180);
+          }, 200);
         }
       });
     });
@@ -722,7 +788,7 @@
     const submitBtn = document.getElementById('submit-btn');
     consentCheck.addEventListener('change', () => { submitBtn.disabled = !consentCheck.checked; });
 
-    // ОТПРАВКА ОТЗЫВА НА СЕРВЕР БОТА (СТРОГО ОРИГИНАЛЬНЫЙ ФОРМАТ)
+    // Отправка обращения на сервер бота
     document.getElementById('feedback-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       submitBtn.disabled = true;
@@ -732,7 +798,6 @@
       const contact = document.getElementById('feedback-contact').value.trim();
 
       try {
-        // Отправляем структурированные данные на сервер бота (порт 8080) как было изначально
         const response = await fetch('https://bot-py-rvtap.onrender.com/api/send-lead', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
